@@ -1,4 +1,8 @@
-# Langton Anthill
+
+
+![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/Example_Patterns/LLLLLRRRRR.png?token=AL2LSZZH6EL5YYKX4S2GNXK5TUX36)
+
+# Langton's Anthill
 
 Real-Time implementation of the Langton's Ant Cellular Automata in python 3.7 [Wikipedia](https://en.wikipedia.org/wiki/Langton%27s_ant)
 
