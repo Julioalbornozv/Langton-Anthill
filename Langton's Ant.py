@@ -34,24 +34,29 @@ def init():
 def rgb(r,g,b):
     return [r/255.0, g/255.0, b/255.0]
 
-def Gen_Tiles(k,color,n_colors,scheme):
+def Gen_Tiles(k,n_colors,scheme):
 	"""
-	Generate lists containning the colors to be used
-	"""
-	default = [[1,0,0],[0,1,0],[0,0,1],[1,1,0],[0,1,1],[1,0,1],[1,1,1],[0.5,0,0],[0,0.5,0],[0,0,0.5],[0.5,0.5,0],[0,0.5,0.5],[0.5,0,0.5],[0.5,0.5,0.5]]
-	#assert n_colors < len(default), "Extra colors not implemented yet"
+	Generates a list containing the color tiles the simulation will use
 	
-	if scheme[0] == "D":
-		colors = default
-	elif scheme[0] == "H":
-		main, var = scheme[1], scheme[2]
-		colors = [[int(main[0]),int(main[1]),int(main[2])]]
-		d_h = 1/n_colors
-		for j in range(1,n_colors):
-			next = [abs(int(main[0])-d_h*j*int(var[0])),abs(int(main[1])-d_h*j*int(var[1])),abs(int(main[2])-d_h*j*int(var[2]))]
-			colors.append(next)
-	elif scheme[0] == "R":
-		colors = []
+	k: Integer, cell size
+	n_colors: Number of colors to be used
+	scheme: Color mode to follow
+	
+	@return List containing colored tiles
+	"""
+	
+	## Color Generation
+	colors = []
+	
+	if scheme[0] == "L":	#Load Colors from colors.txt
+		a =	open("colors.txt", "r")
+		data = a.readlines()[3::]
+		for line in data:
+			val = line.split(",")
+			val[-1].replace("\n","")	# Find a better way to do this
+			colors.append(rgb(int(val[0]),int(val[1]),int(val[2])))
+		
+	elif scheme[0] == "R":	#Generates a random color pallete
 		for j in range(0,n_colors):
 			colors.append([random.random(),random.random(),random.random()])
 	
@@ -206,7 +211,7 @@ init()
 run = True
 
 #Generate tiles to be used
-tiles = Gen_Tiles(k,[1,0,0],len(ruleset)-1,scheme)
+tiles = Gen_Tiles(k,len(ruleset)-1,scheme)
 
 #Generate ants
 if Colony == []: #No ants found

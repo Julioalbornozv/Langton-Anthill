@@ -1,0 +1,6 @@
+# List of colors goes on the first column, if there are less colors than instructions
+# the program will generate colors in a gradient to fill the pallete
+
+153,0,0
+51,25,0
+51,153,255
