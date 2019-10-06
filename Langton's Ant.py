@@ -6,6 +6,7 @@ import sys
 import os
 import random
 import time
+import pdb
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -43,26 +44,58 @@ def Gen_Tiles(k,n_colors,scheme):
 	"""
 	
 	## Color Generation
-	colors = []
-	if scheme[0] == "L":	#Load Colors from colors.txt
+	temp, colors, tileset = [], [], []
+	if scheme == "L":	#Load Colors from colors.txt
 		with open("colors.txt", "r") as data:
 			for line in data:
-				colors.append(list(map((lambda x: float(x)/255.0), (line.strip("\n")).split("\t"))))
+				temp.append(np.asarray(list(map(int, (line.strip("\n")).split("\t")))))
 		
-	elif scheme[0] == "R":	#Generates a random color pallete
+		temp = np.asarray(temp)
+		if len(temp) < n_colors:
+			# If not enough colors are provided, this section should generate a pallete based on the given colors #TODO Move to its own method
+			req = n_colors-len(temp)
+			gaps = np.zeros((len(temp)-1))
+			gaps.fill(req//(len(temp)-1))
+			
+			gaps[:(req%(len(temp)-1))] += 1  #Add remainder
+			
+			gen = [0,0,0]
+			#colors.append(temp[0])
+			
+			#TODO Refactor using more numpy methods (arange)
+			for i in range(len(temp)-1):
+				for j in range(3):
+					step = ((temp[i+1][j]-temp[i][j])//(gaps[i]+1)).astype(int)
+					if step == 0:	#Same color
+						gen[j] = [temp[i][j]]*(gaps[i].astype(int))
+					else:
+						gen[j] = list(range(temp[i][j],temp[i+1][j],step))
+					
+				t = list(zip(gen[0],gen[1],gen[2]))
+				colors.extend(t)
+			colors.append(temp[i+1])
+			
+			colors = np.asarray(colors) / 255.0
+				
+		else:
+			colors = temp / 255.0
+			
+			
+	elif scheme == "R":	#Generates a random color pallete
 		for j in range(0,n_colors):
 			colors.append([random.random(),random.random(),random.random()])
+		
+		colors = np.asarray(colors)/255.0
 	
-	color_tiles = []
-	
-	
-	for i in range(n_colors):	
+	#pdb.set_trace()
+	#assert n_colors == len(colors)
+	for t_num in range(n_colors):	
 		tile = glGenLists(1)
 		glNewList(tile,GL_COMPILE)
 		glPushMatrix()
 		
 		glBegin(GL_QUADS)
-		glColor3fv(colors[i])
+		glColor3fv(colors[t_num])
 		glVertex2fv([-(k/2), -(k/2)])
 		glVertex2fv([-(k/2), (k/2)])
 		glVertex2fv([k/2, k/2])
@@ -72,9 +105,9 @@ def Gen_Tiles(k,n_colors,scheme):
 		glPopMatrix()
 		glEndList()
 		
-		color_tiles.append(tile)
+		tileset.append(tile)
 	
-	return color_tiles
+	return tileset
 	
 def Paint_path(k,path,colors,buffer):
 	"""
@@ -154,7 +187,7 @@ for line in file:
 	if l[0] == "ANT":	#Ant declaration
 		Colony.append(l)
 	elif l[0] == "COLOR":
-		scheme = l[1:]
+		scheme = l[1]
 	else:
 		Param.append(l[1])
 
@@ -218,8 +251,9 @@ else:
 			dec[2] = random.randint(1,height-1)
 		if dec[3] == "R":
 			dec[3] = random.randint(0,3)
-			
-		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k,int(dec[3]),k)		#Initializes ants
+		
+		#Initializes ants
+		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k,int(dec[3]),k)		
 		a += 1
 		
 		
@@ -234,7 +268,6 @@ Alg_time = 0
 Update_time = 0
 
 while(run):	
-	#print(Color_ID)
 	for event in pygame.event.get():
 		if event.type == QUIT:
 			run = False
@@ -250,7 +283,7 @@ while(run):
 				ppf -= 10
 				if ppf < 0:
 					ppf = 0
-			elif event.key == K_p:		#Performance check
+			elif event.key == K_p:		#Performance check #TODO Move this to its own test environement
 				print("-------------------------------------------------------")
 				print("N° of tiles painted: {} tiles".format(len(path)))
 				print("N° of tile ID's: {}".format(len(tiles)))
