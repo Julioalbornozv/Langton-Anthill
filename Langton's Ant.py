@@ -30,9 +30,6 @@ def init():
 	glShadeModel(GL_SMOOTH)
 	glClearDepth(1.0)
 	return
-	
-def rgb(r,g,b):
-    return [r/255.0, g/255.0, b/255.0]
 
 def Gen_Tiles(k,n_colors,scheme):
 	"""
@@ -47,14 +44,10 @@ def Gen_Tiles(k,n_colors,scheme):
 	
 	## Color Generation
 	colors = []
-	
 	if scheme[0] == "L":	#Load Colors from colors.txt
-		a =	open("colors.txt", "r")
-		data = a.readlines()[3::]
-		for line in data:
-			val = line.split(",")
-			val[-1].replace("\n","")	# Find a better way to do this
-			colors.append(rgb(int(val[0]),int(val[1]),int(val[2])))
+		with open("colors.txt", "r") as data:
+			for line in data:
+				colors.append(list(map((lambda x: float(x)/255.0), (line.strip("\n")).split("\t"))))
 		
 	elif scheme[0] == "R":	#Generates a random color pallete
 		for j in range(0,n_colors):
