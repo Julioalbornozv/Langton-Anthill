@@ -1,5 +1,6 @@
 # coding=utf-8
 
+#TODO: Integrate logging library
 import pygame
 import numpy as np
 import sys
@@ -13,6 +14,8 @@ from OpenGL.GLU import *
 from win32api import GetSystemMetrics
 
 def init():
+	#TODO Migrate from pygame to cyglfw
+	#TODO Add Docstring
 	if full:
 		os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 	
@@ -42,6 +45,9 @@ def Gen_Tiles(k,n_colors,scheme):
 	
 	@return List containing colored tiles
 	"""
+	#TODO: Refactor and solve bugs
+	#TODO: Abstract tile generation to an object
+	#TODO: Color repetition vs color auto-filling
 	
 	## Color Generation
 	temp, colors, tileset = [], [], []
@@ -62,7 +68,7 @@ def Gen_Tiles(k,n_colors,scheme):
 			gen = [0,0,0]
 			#colors.append(temp[0])
 			
-			#TODO Refactor using more numpy methods (arange)
+			#TODO: Refactor using more numpy methods (arange)
 			for i in range(len(temp)-1):
 				for j in range(3):
 					step = ((temp[i+1][j]-temp[i][j])//(gaps[i]+1)).astype(int)
@@ -85,7 +91,7 @@ def Gen_Tiles(k,n_colors,scheme):
 		for j in range(0,n_colors):
 			colors.append([random.random(),random.random(),random.random()])
 		
-		colors = np.asarray(colors)/255.0
+		colors = np.asarray(colors)
 	
 	#pdb.set_trace()
 	#assert n_colors == len(colors)
@@ -112,11 +118,16 @@ def Gen_Tiles(k,n_colors,scheme):
 def Paint_path(k,path,colors,buffer):
 	"""
 	Paint stored tiles from path
+	
+	HINT: Current bottleneck seems to originate from here...
+	TODO: Add docstring
+	TODO: Improve performance using shaders
 	"""
+	#TODO: Replace path list with a coordinate dictionary
 	if path == []:
 		path.extend(buffer)
 		return path
-	for i in range(len(path)):
+	for i in range(len(path)):	
 		if path[i] in buffer:
 			buffer.remove(path[i])
 			
@@ -135,6 +146,9 @@ def Paint_path(k,path,colors,buffer):
 Ant Class
 """
 class Ant(object):
+	#TODO: Add Docstring
+	#TODO: Improve rotation logic
+	
 	def __init__(self,x,y,dir,k):
 		self.x = x
 		self.y = y
@@ -176,6 +190,8 @@ class Ant(object):
 """
 Starting Parameters
 """
+#TODO: Move parsing logic to its own object
+
 Param = []
 Colony = []		#Stores all declared ants
 
@@ -215,6 +231,7 @@ print(ruleset)
 assert len(ruleset) > 1, "Rulesets must contain at least 2 instructions"
 
 #Sets screen size when requested
+#TODO: Standardize x,y coordinates (Remove as much divisions as possible)
 full = False
 
 if dim == -1 and height == -1:
@@ -240,6 +257,8 @@ run = True
 tiles = Gen_Tiles(k,len(ruleset)-1,scheme)
 
 #Generate ants
+#TODO: Move colony to its own object
+
 if Colony == []: #No ants found
 	Colony = [Ant(int(ancho/2),int(alto/2),"E",k,)]	#Ant placed at default position
 else:
@@ -291,7 +310,7 @@ while(run):
 				print("Algorithm took {} seconds to complete {} cycles".format(Alg_time,ppf))
 				print("Algorithm took {} seconds to update {} ants on average".format(Update_time,len(Colony)))
 					
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	#TODO: See if this is causing a bottleneck
 	
 	Ddt_1 = time.time()
 	path = Paint_path(k,path,Color_ID,buffer)
@@ -299,6 +318,8 @@ while(run):
 	Disp_time = Ddt_2 - Ddt_1
 	
 	Adt_1 = time.time()
+	
+	#TODO: Improve this code
 	for iter in range(ppf):
 		for ant in Colony:		#1 turn for each ant
 			
