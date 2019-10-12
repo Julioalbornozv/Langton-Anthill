@@ -8,6 +8,7 @@ import os
 import random
 import time
 import pdb
+import Tile_Gen as tg
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -35,86 +36,6 @@ def init():
 	glClearDepth(1.0)
 	return
 
-def Gen_Tiles(k,n_colors,scheme):
-	"""
-	Generates a list containing the color tiles the simulation will use
-	
-	k: Integer, cell size
-	n_colors: Number of colors to be used
-	scheme: Color mode to follow
-	
-	@return List containing colored tiles
-	"""
-	#TODO: Refactor and solve bugs
-	#TODO: Abstract tile generation to an object
-	#TODO: Color repetition vs color auto-filling
-	
-	## Color Generation
-	temp, colors, tileset = [], [], []
-	if scheme == "L":	#Load Colors from colors.txt
-		with open("colors.txt", "r") as data:
-			for line in data:
-				temp.append(np.asarray(list(map(int, (line.strip("\n")).split("\t")))))
-		
-		temp = np.asarray(temp)
-		if len(temp) < n_colors:
-			# If not enough colors are provided, this section should generate a pallete based on the given colors #TODO Move to its own method
-			req = n_colors-len(temp)
-			gaps = np.zeros((len(temp)-1))
-			gaps.fill(req//(len(temp)-1))
-			
-			gaps[:(req%(len(temp)-1))] += 1  #Add remainder
-			
-			gen = [0,0,0]
-			#colors.append(temp[0])
-			
-			#TODO: Refactor using more numpy methods (arange)
-			for i in range(len(temp)-1):
-				for j in range(3):
-					step = ((temp[i+1][j]-temp[i][j])//(gaps[i]+1)).astype(int)
-					if step == 0:	#Same color
-						gen[j] = [temp[i][j]]*(gaps[i].astype(int))
-					else:
-						gen[j] = list(range(temp[i][j],temp[i+1][j],step))
-					
-				t = list(zip(gen[0],gen[1],gen[2]))
-				colors.extend(t)
-			colors.append(temp[i+1])
-			
-			colors = np.asarray(colors) / 255.0
-				
-		else:
-			colors = temp / 255.0
-			
-			
-	elif scheme == "R":	#Generates a random color pallete
-		for j in range(0,n_colors):
-			colors.append([random.random(),random.random(),random.random()])
-		
-		colors = np.asarray(colors)
-	
-	#pdb.set_trace()
-	#assert n_colors == len(colors)
-	for t_num in range(n_colors):	
-		tile = glGenLists(1)
-		glNewList(tile,GL_COMPILE)
-		glPushMatrix()
-		
-		glBegin(GL_QUADS)
-		glColor3fv(colors[t_num])
-		glVertex2fv([-(k/2), -(k/2)])
-		glVertex2fv([-(k/2), (k/2)])
-		glVertex2fv([k/2, k/2])
-		glVertex2fv([k/2, -(k/2)])
-		glEnd()
-		
-		glPopMatrix()
-		glEndList()
-		
-		tileset.append(tile)
-	
-	return tileset
-	
 def Paint_path(k,path,colors,buffer):
 	"""
 	Paint stored tiles from path
@@ -254,7 +175,16 @@ init()
 run = True
 
 #Generate tiles to be used
-tiles = Gen_Tiles(k,len(ruleset)-1,scheme)
+Tgen = tg.Tile_Generator(len(ruleset)-1)
+
+assert scheme in ["R","L"]
+
+if scheme == "R":
+	Tgen.random_pallete(len(ruleset)-1)
+elif scheme == "L":
+	Tgen.load_pallete()
+	
+tiles = Tgen.generate_tiles(k)
 
 #Generate ants
 #TODO: Move colony to its own object
