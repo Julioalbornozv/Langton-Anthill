@@ -27,6 +27,15 @@ class Tile_Generator(object):
 				temp.append(np.asarray(list(map(int, (line.strip("\n")).split("\t")))))
 		
 		self.palette = np.asarray(temp)
+	
+	def save_palette(self,path):
+		"""
+		Saves the current palette into a file
+		
+		"""
+		f = open(path,"w")
+		for color in self.palette:
+			f.write(str(int(color[0]))+"\t"+str(int(color[1]))+"\t"+str(int(color[2]))+"\n")
 		
 	def random_palette(self, n):
 		"""
@@ -34,17 +43,20 @@ class Tile_Generator(object):
 		
 		@param: n, Number of colors to be generated
 		"""
+		colors = []
 		for j in range(0,n):
-			colors.append([random.random(),random.random(),random.random()])
+			colors.append([random.randint(0,255),random.randint(0,255),random.randint(0,255)])
 		
 		self.palette = np.asarray(colors)
 	
-	def fill_palette(self, interp = True):
+	def fill_palette(self, interp = True, shuffle = True):
 		"""
 		This method extends the existing palette to a target number of colors.
+		
 		If interp is set to True, it will generate colors by interpolating between each color given. If false, the program will repeat colors until the palette size meets the target.
 		
 		@param interp, Boolean
+		
 		@returns Numpy array with the new colorset
 		"""
 		n = len(self.palette)
@@ -66,19 +78,23 @@ class Tile_Generator(object):
 			
 			colors.append(self.palette[-1]) #Adds last color
 			new = np.asarray(colors)
-			return new
 			
 		else: 				# Repeats colors in order
 			new = np.zeros((self.size,3))
 			for i in range(self.size):
 				new[i] = self.palette[i%n]
-			return new
+		
+		if shuffle:
+			np.random.shuffle(new)
 			
-	def generate_tiles(self, cell_size):
+		return new
+		
+	def generate_tiles(self, cell_size, save = True):
 		"""
 		Generates tiles using OpenGL Display lists and the colors provided by the color palette , it will return a list of glList indexes, which can be used by glCallList to draw them on the screen.
 		
 		@param cell_size, tile side length in pixels
+		@param save, if True it will save the palette after its generated
 		@return Index List
 		"""
 		n = len(self.palette)
@@ -91,6 +107,9 @@ class Tile_Generator(object):
 		elif n > self.size:
 			self.palette = self.palette[:self.size]
 			
+		if save:
+			self.save_palette("save/colors.txt")
+		
 		colors = self.palette / 255.0 #Normlizes colors
 		k = cell_size/2
 		tileset = []
