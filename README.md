@@ -26,7 +26,12 @@ Available settings are listed below:	(Values are separated using tabs)
 			 - Using KE instead of KN generates a ruleset which includes a 0° and 180°  rotation 
 			   instructions (U and D)
 			   (Ex: KE14 => LRURULDDLLDRDL
-	COLOR: Currently its only option is Random
+	COLOR: Two Modes are available:
+				R: Random Colorset
+				L: Loads colorset from the "colors.txt" file
+			
+			If not enough colors are provided the program will interpolate new colors from the given set
+	
 
 	//Finally, the following lines consist of multiple strings representing the ants starting tile and 
 	  orientation. Each line uses the following syntax:
@@ -40,6 +45,8 @@ To run the simulation with the given parameters execute:
 
 Press Esc to quit the simulation, pressing the w and s  keys will adjust the number of iterations simulated per frame. The simulation can be stopped temporarily by reducing the speed to its minimum value.
 
+Colors used in a session will be saved in the save folder
+
 # Dependencies
 The program currently uses the following libraries: 
 numpy, pygame, OpenGL.GL, OpenGL.GLU and win32api
@@ -47,6 +54,5 @@ numpy, pygame, OpenGL.GL, OpenGL.GLU and win32api
 # TODO
 * Unit Tests
 * Code Refactoring
-* Better Color support
 * Better Parameter input
 * Improve Performance
