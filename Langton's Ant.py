@@ -180,9 +180,9 @@ Tgen = tg.Tile_Generator(len(ruleset)-1)
 assert scheme in ["R","L"]
 
 if scheme == "R":
-	Tgen.random_pallete(len(ruleset)-1)
+	Tgen.random_palette(len(ruleset)-1)
 elif scheme == "L":
-	Tgen.load_pallete()
+	Tgen.load_palette()
 	
 tiles = Tgen.generate_tiles(k)
 

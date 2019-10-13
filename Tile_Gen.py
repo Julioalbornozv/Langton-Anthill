@@ -10,14 +10,14 @@ class Tile_Generator(object):
 		Class responsible to create the tiles which will be used by the program, currently this tiles are a set of gl
 		
 		@param: size, Expected number of colors to be generated
-		@field: pallete, List of colors values for each tile (0-255)
+		@field: palette, List of colors values for each tile (0-255)
 		"""
-		self.pallete = []
+		self.palette = []
 		self.size = size
 	
-	def load_pallete(self, path = "colors.txt"):
+	def load_palette(self, path = "colors.txt"):
 		"""
-		Loads a pallete from a txt file
+		Loads a palette from a txt file
 		
 		@param: path, File path to be used
 		"""
@@ -26,81 +26,72 @@ class Tile_Generator(object):
 			for line in data:
 				temp.append(np.asarray(list(map(int, (line.strip("\n")).split("\t")))))
 		
-		self.pallete = np.asarray(temp)
+		self.palette = np.asarray(temp)
 		
-	def random_pallete(self, n):
+	def random_palette(self, n):
 		"""
-		Generates a color pallete of n random colors 
+		Generates a color palette of n random colors 
 		
 		@param: n, Number of colors to be generated
 		"""
 		for j in range(0,n):
 			colors.append([random.random(),random.random(),random.random()])
 		
-		self.pallete = np.asarray(colors)
+		self.palette = np.asarray(colors)
 	
-	def fill_pallete(self, autocomplete = False):
+	def fill_palette(self, interp = True):
 		"""
-		This method extends the existing pallete to a target number of colors
-		If autocomplete is set to True, the program will add colors between range of the colors given. If false, the program will repeat colors until the pallete size meets the target
+		This method extends the existing palette to a target number of colors.
+		If interp is set to True, it will generate colors by interpolating between each color given. If false, the program will repeat colors until the palette size meets the target.
 		
-		@param autocomplete, Boolean
+		@param interp, Boolean
 		@returns Numpy array with the new colorset
 		"""
-		assert autocomplete == False, "Feature not implemented"
-		
-		if autocomplete:	#Generates color between the given ones
+		n = len(self.palette)
+		if interp:	#Generates color between the given ones
+			req = self.size - n
+			gaps = np.zeros((n - 1))
+			gaps.fill(req // (n - 1))
 			
-			"""
-			req = n_colors-len(temp)
-			gaps = np.zeros((len(temp)-1))
-			gaps.fill(req//(len(temp)-1))
-			
-			gaps[:(req%(len(temp)-1))] += 1  #Add remainder
+			gaps[:(req % (n - 1))] += 1  #Add remainder
 			
 			gen = [0,0,0]
-			#colors.append(temp[0])
+			colors = []
 			
-			#TODO: Refactor using more numpy methods (arange)
-			for i in range(len(temp)-1):
+			for i in range(n-1):
 				for j in range(3):
-					step = ((temp[i+1][j]-temp[i][j])//(gaps[i]+1)).astype(int)
-					if step == 0:	#Same color
-						gen[j] = [temp[i][j]]*(gaps[i].astype(int))
-					else:
-						gen[j] = list(range(temp[i][j],temp[i+1][j],step))
-					
+					gen[j] = np.linspace(self.palette[i][j], self.palette[i+1][j], gaps[i]+1, endpoint=False)
 				t = list(zip(gen[0],gen[1],gen[2]))
 				colors.extend(t)
-			colors.append(temp[i+1])
 			
-			colors = np.asarray(colors) / 255.0
-			"""
+			colors.append(self.palette[-1]) #Adds last color
+			new = np.asarray(colors)
+			return new
+			
 		else: 				# Repeats colors in order
 			new = np.zeros((self.size,3))
-			n = len(self.pallete)
 			for i in range(self.size):
-				new[i] = self.pallete[i%n]
+				new[i] = self.palette[i%n]
 			return new
 			
 	def generate_tiles(self, cell_size):
 		"""
-		Generates tiles using OpenGL Display lists and the colors provided by the color pallete , it will return a list of glList indexes, which can be used by glCallList to draw them on the screen.
+		Generates tiles using OpenGL Display lists and the colors provided by the color palette , it will return a list of glList indexes, which can be used by glCallList to draw them on the screen.
 		
 		@param cell_size, tile side length in pixels
 		@return Index List
 		"""
-		n = len(self.pallete)
+		n = len(self.palette)
 		
 		assert n >=2, "Colorset Error: Not enough colors given"
 		
 		if n < self.size:
-			self.pallete = self.fill_pallete()
+			self.palette = self.fill_palette()
 			
 		elif n > self.size:
-			self.pallete = self.pallete[:self.size]
+			self.palette = self.palette[:self.size]
 			
-		colors = self.pallete / 255.0 #Normlizes colors
+		colors = self.palette / 255.0 #Normlizes colors
 		k = cell_size/2
 		tileset = []
 		
