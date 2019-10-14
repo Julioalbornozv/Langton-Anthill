@@ -36,7 +36,7 @@ def init():
 	glClearDepth(1.0)
 	return
 
-def Paint_path(k,path,colors,buffer):
+def Paint_path(k,colors):
 	"""
 	Paint stored tiles from path
 	
@@ -44,25 +44,15 @@ def Paint_path(k,path,colors,buffer):
 	TODO: Add docstring
 	TODO: Improve performance using shaders
 	"""
-	#TODO: Replace path list with a coordinate dictionary
-	if path == []:
-		path.extend(buffer)
-		return path
-	for i in range(len(path)):	
-		if path[i] in buffer:
-			buffer.remove(path[i])
-			
-		mx = path[i][0]//k
-		my = path[i][1]//k
-		if colors[my][mx] != 0:
+	
+	for coord in colors.keys():
+		hue = colors.get(coord)
+		if hue != 0:
 			glPushMatrix()
-			glTranslate(path[i][0],path[i][1],0)
-			glCallList(colors[my][mx])
+			glTranslate(coord[0],coord[1],0)
+			glCallList(hue)
 			glPopMatrix()
 			
-	path.extend(buffer)
-	return path
-
 """
 Ant Class
 """
@@ -205,10 +195,7 @@ else:
 		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k,int(dec[3]),k)		
 		a += 1
 		
-		
-path = []
-Color_ID = np.zeros((height,dim),dtype = int)
-buffer = []
+Color_ID = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 hide_ant = True
 ppf = 50	#Iterations per frame
 
@@ -234,7 +221,7 @@ while(run):
 					ppf = 0
 			elif event.key == K_p:		#Performance check #TODO Move this to its own test environement
 				print("-------------------------------------------------------")
-				print("N° of tiles painted: {} tiles".format(len(path)))
+				print("N° of tiles painted: {} tiles".format(len(list(Color_ID.keys()))))
 				print("N° of tile ID's: {}".format(len(tiles)))
 				print("Display took {} seconds to paint the screen".format(Disp_time))
 				print("Algorithm took {} seconds to complete {} cycles".format(Alg_time,ppf))
@@ -243,7 +230,9 @@ while(run):
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	#TODO: See if this is causing a bottleneck
 	
 	Ddt_1 = time.time()
-	path = Paint_path(k,path,Color_ID,buffer)
+	
+	Paint_path(k,Color_ID)
+	
 	Ddt_2 = time.time()
 	Disp_time = Ddt_2 - Ddt_1
 	
@@ -253,21 +242,20 @@ while(run):
 	for iter in range(ppf):
 		for ant in Colony:		#1 turn for each ant
 			
-			ant.dir = ant.dir % 4
+			ant.dir %= 4
 			
-			mx = ant.x//k
-			my = ant.y//k
+			pos = (ant.x, ant.y)
 			
+			color = Color_ID.get(pos)
+			if color == None:	#New tile is rendered
+				color = 0
 			
-			color = Color_ID[my][mx]
-			Color_ID[my][mx] = (Color_ID[my][mx]+1)%(len(tiles)+1)
-			ant.command(ruleset[color])
+			Color_ID.update({pos : (color+1) % (len(tiles)+1)})  #
+				
+			ant.command(ruleset[color])  #Move ant based on recovered rule
 						
-			ant.x = ant.x % (ancho)
-			ant.y = ant.y % (alto)
-			
-			if (ant.x,ant.y) not in buffer:
-				buffer.append((ant.x,ant.y))
+			ant.x %= ancho	#Wraps ant position
+			ant.y %= alto
 		
 	Adt_2 = time.time()
 	Alg_time = Adt_2-Adt_1
