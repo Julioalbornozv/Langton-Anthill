@@ -53,54 +53,43 @@ def Paint_path(map):
 			
 #-------------------- Ant Class --------------------#
 class Ant(object):
-	#TODO: Add Docstring
-	#TODO: Improve rotation logic
+	"""
+	Ant Class, it has a position and an orientation, the ant will move depending on the instruction that the current tile color represents
+	
+	@param x, y: Coordinates
+	@param dir: Orientation
+	@param k: Tile size
+	"""
 	
 	def __init__(self,x,y,dir,k):
-		self.x = x
-		self.y = y
+		self.pos = np.array([x,y])
 		self.dir = dir
-		self.k = k	#Length of a step
-		self.orders = ((-1,0),(0,1),(1,0),(0,-1))
+		self.orders = np.array(((-1,0),(0,1),(1,0),(0,-1)))*k
 	
 	def command(self, com):
 		if com == "L":
-			self.left()
+			self.pos += self.orders[self.dir]
+			self.dir -= 1
+			
 		elif com == "R":
-			self.right()
+			self.pos -= self.orders[self.dir]
+			self.dir += 1
+		
 		elif com == "U":
-			self.up()
+			self.pos[1] -= self.orders[self.dir][0]
+			self.pos[0] += self.orders[self.dir][1]
+		
 		elif com == "D":
-			self.down()
+			self.pos[1] += self.orders[self.dir][0]
+			self.pos[0] -= self.orders[self.dir][1]
 			
-	def left(self):
-		self.x += self.orders[self.dir][0]*self.k
-		self.y += self.orders[self.dir][1]*self.k
-		
-		self.dir -= 1
+			self.dir -= 2	
 			
-	def right(self):
-		self.x -= self.orders[self.dir][0]*self.k
-		self.y -= self.orders[self.dir][1]*self.k	
-		
-		self.dir += 1
-		
-	def up(self):	
-		self.y -= self.orders[self.dir][0]*self.k
-		self.x += self.orders[self.dir][1]*self.k	
-			
-	def down(self):	
-		self.y += self.orders[self.dir][0]*self.k
-		self.x -= self.orders[self.dir][1]*self.k	
-		
-		self.dir += 2
-
 #-------------------- Parameter Extraction --------------------#
 
-#TODO: Move parsing logic to its own object
+#TODO: Move parsing logic to its own method/object
 
-Param = []
-Colony = []		#Stores all declared ants
+Param, Colony = [], []
 
 file = open("Parameters_Ant.txt","r")
 for line in file:
@@ -122,7 +111,7 @@ ruleset = Param[3]
 if ruleset[0] == "K":	#Random ruleset
 	mode = ruleset[1]
 	length = int(ruleset[2:])
-	instructions = ["L","R","U","D"]	#Find a way to make it mutable
+	instructions = ["L","R","U","D"]
 	rand_rule = ""
 	for i in range(length):
 		if mode == "N":
@@ -134,7 +123,7 @@ if ruleset[0] == "K":	#Random ruleset
 	ruleset = rand_rule
 	
 print(ruleset)
-		
+
 assert len(ruleset) > 1, "Rulesets must contain at least 2 instructions"
 
 #Sets screen size when requested
@@ -176,7 +165,7 @@ tiles = Tgen.generate_tiles(k)
 #TODO: Move colony to its own object
 
 if Colony == []: #No ants found
-	Colony = [Ant(int(ancho/2),int(alto/2),"E",k,)]	#Ant placed at default position
+	Colony = [Ant(int(ancho/2),int(alto/2),1,k)]	#Ant placed at default position
 else:
 	a = 0
 	for dec in Colony:
@@ -197,9 +186,7 @@ else:
 Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 ppf = 50	#Iterations per frame
 
-Disp_time = 0
-Alg_time = 0
-Update_time = 0
+Disp_time, Alg_time, Update_time = 0, 0, 0
 
 while(run):	
 	for event in pygame.event.get():
@@ -236,24 +223,21 @@ while(run):
 	
 	Adt_1 = time.time()
 	
-	#TODO: Improve this code
 	for iter in range(ppf):
 		for ant in Colony:		#1 turn for each ant
 			
 			ant.dir %= 4
 			
-			pos = (ant.x, ant.y)
-			
-			color = Map.get(pos)
+			color = Map.get(tuple(ant.pos))
 			if color == None:	#New tile is rendered
 				color = 0
 			
-			Map.update({pos : (color+1) % (len(tiles)+1)})  #
+			Map.update({tuple(ant.pos) : (color+1) % (len(tiles)+1)}) 
 				
 			ant.command(ruleset[color])  #Move ant based on recovered rule
 						
-			ant.x %= ancho	#Wraps ant position
-			ant.y %= alto
+			ant.pos[0] %= ancho	#Wraps ant position
+			ant.pos[1] %= alto
 		
 	Adt_2 = time.time()
 	Alg_time = Adt_2-Adt_1
