@@ -36,26 +36,22 @@ def init():
 	glClearDepth(1.0)
 	return
 
-def Paint_path(k,colors):
+def Paint_path(map):
 	"""
-	Paint stored tiles from path
+	Paint tiles from the current frame
 	
-	HINT: Current bottleneck seems to originate from here...
-	TODO: Add docstring
-	TODO: Improve performance using shaders
+	@param map: Dict((x,y) : ID), Dictionary which contain the position of the tiles and their respective color
 	"""
 	
-	for coord in colors.keys():
-		hue = colors.get(coord)
+	for coord in map.keys():
+		hue = map.get(coord)
 		if hue != 0:
 			glPushMatrix()
 			glTranslate(coord[0],coord[1],0)
 			glCallList(hue)
 			glPopMatrix()
 			
-"""
-Ant Class
-"""
+#-------------------- Ant Class --------------------#
 class Ant(object):
 	#TODO: Add Docstring
 	#TODO: Improve rotation logic
@@ -98,9 +94,9 @@ class Ant(object):
 		self.x -= self.orders[self.dir][1]*self.k	
 		
 		self.dir += 2
-"""
-Starting Parameters
-"""
+
+#-------------------- Parameter Extraction --------------------#
+
 #TODO: Move parsing logic to its own object
 
 Param = []
@@ -126,7 +122,7 @@ ruleset = Param[3]
 if ruleset[0] == "K":	#Random ruleset
 	mode = ruleset[1]
 	length = int(ruleset[2:])
-	instructions = ["L","R","U","D"]	#Try to make it mutable
+	instructions = ["L","R","U","D"]	#Find a way to make it mutable
 	rand_rule = ""
 	for i in range(length):
 		if mode == "N":
@@ -142,7 +138,7 @@ print(ruleset)
 assert len(ruleset) > 1, "Rulesets must contain at least 2 instructions"
 
 #Sets screen size when requested
-#TODO: Standardize x,y coordinates (Remove as much divisions as possible)
+#TODO: Standardize x,y coordinates (Remove as many divisions as possible)
 full = False
 
 if dim == -1 and height == -1:
@@ -158,13 +154,12 @@ if height == -1:
 ancho = int(dim*k)
 alto = int(height*k)	
 
-"""
-Main Loop
-"""	
+#-------------------- Program Logic ----------------------#
+#---------------------------------------------------------#
 init()
 run = True
 
-#Generate tiles to be used
+#-------------------- Tile Generation --------------------#
 Tgen = tg.Tile_Generator(len(ruleset)-1)
 
 assert scheme in ["R","L"]
@@ -176,7 +171,8 @@ elif scheme == "L":
 	
 tiles = Tgen.generate_tiles(k)
 
-#Generate ants
+#-------------------- Ant Generation --------------------#
+
 #TODO: Move colony to its own object
 
 if Colony == []: #No ants found
@@ -195,8 +191,10 @@ else:
 		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k,int(dec[3]),k)		
 		a += 1
 		
-Color_ID = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
-hide_ant = True
+
+#-------------------- Main Loop --------------------#
+
+Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 ppf = 50	#Iterations per frame
 
 Disp_time = 0
@@ -221,17 +219,17 @@ while(run):
 					ppf = 0
 			elif event.key == K_p:		#Performance check #TODO Move this to its own test environement
 				print("-------------------------------------------------------")
-				print("N° of tiles painted: {} tiles".format(len(list(Color_ID.keys()))))
+				print("N° of tiles painted: {} tiles".format(len(list(Map.keys()))))
 				print("N° of tile ID's: {}".format(len(tiles)))
 				print("Display took {} seconds to paint the screen".format(Disp_time))
 				print("Algorithm took {} seconds to complete {} cycles".format(Alg_time,ppf))
 				print("Algorithm took {} seconds to update {} ants on average".format(Update_time,len(Colony)))
 					
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	#TODO: See if this is causing a bottleneck
+	glClear(GL_COLOR_BUFFER_BIT)
 	
 	Ddt_1 = time.time()
 	
-	Paint_path(k,Color_ID)
+	Paint_path(Map)
 	
 	Ddt_2 = time.time()
 	Disp_time = Ddt_2 - Ddt_1
@@ -246,11 +244,11 @@ while(run):
 			
 			pos = (ant.x, ant.y)
 			
-			color = Color_ID.get(pos)
+			color = Map.get(pos)
 			if color == None:	#New tile is rendered
 				color = 0
 			
-			Color_ID.update({pos : (color+1) % (len(tiles)+1)})  #
+			Map.update({pos : (color+1) % (len(tiles)+1)})  #
 				
 			ant.command(ruleset[color])  #Move ant based on recovered rule
 						
