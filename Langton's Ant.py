@@ -64,25 +64,28 @@ class Ant(object):
 	def __init__(self,x,y,dir,k):
 		self.pos = np.array([x,y])
 		self.dir = dir
-		self.orders = np.array(((-1,0),(0,1),(1,0),(0,-1)))*k
+		self.ori = np.array(((0,1),(1,0),(0,-1),(-1,0)))*k
 	
+	def rot(self,theta):
+		"""
+		Calculates new orientation base on the rotation angle
+		"""
+		return np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]).astype(int)
+		
 	def command(self, com):
 		if com == "L":
-			self.pos += self.orders[self.dir]
+			self.pos += np.dot(self.ori[self.dir], self.rot(-np.pi/2))
 			self.dir -= 1
 			
 		elif com == "R":
-			self.pos -= self.orders[self.dir]
+			self.pos += np.dot(self.ori[self.dir], self.rot(np.pi/2))
 			self.dir += 1
 		
 		elif com == "U":
-			self.pos[1] -= self.orders[self.dir][0]
-			self.pos[0] += self.orders[self.dir][1]
-		
-		elif com == "D":
-			self.pos[1] += self.orders[self.dir][0]
-			self.pos[0] -= self.orders[self.dir][1]
+			self.pos += np.dot(self.ori[self.dir], self.rot(0))
 			
+		elif com == "D":
+			self.pos += np.dot(self.ori[self.dir], self.rot(np.pi))
 			self.dir -= 2	
 			
 #-------------------- Parameter Extraction --------------------#
