@@ -61,32 +61,22 @@ class Ant(object):
 	@param k: Tile size
 	"""
 	
-	def __init__(self,x,y,dir,k):
+	def __init__(self,x,y,dir):
 		self.pos = np.array([x,y])
-		self.dir = dir
-		self.ori = np.array(((0,1),(1,0),(0,-1),(-1,0)))*k
-	
+		self.dir = np.array(dir)
+		
 	def rot(self,theta):
 		"""
 		Calculates new orientation base on the rotation angle
 		"""
 		return np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]).astype(int)
 		
-	def command(self, com):
-		if com == "L":
-			self.pos += np.dot(self.ori[self.dir], self.rot(-np.pi/2))
-			self.dir -= 1
-			
-		elif com == "R":
-			self.pos += np.dot(self.ori[self.dir], self.rot(np.pi/2))
-			self.dir += 1
-		
-		elif com == "U":
-			self.pos += np.dot(self.ori[self.dir], self.rot(0))
-			
-		elif com == "D":
-			self.pos += np.dot(self.ori[self.dir], self.rot(np.pi))
-			self.dir -= 2	
+	def command(self, theta):
+		"""
+		Rotates ant and moves forward
+		"""
+		self.dir = np.dot(self.dir, self.rot(theta))
+		self.pos += self.dir
 			
 #-------------------- Parameter Extraction --------------------#
 
@@ -166,6 +156,8 @@ tiles = Tgen.generate_tiles(k)
 #-------------------- Ant Generation --------------------#
 
 #TODO: Move colony to its own object
+directions = dict({0: (0,k), 1: (k,0), 2: (0,-k), 3: (-k,0)})
+angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
 
 if Colony == []: #No ants found
 	Colony = [Ant(int(ancho/2),int(alto/2),1,k)]	#Ant placed at default position
@@ -180,7 +172,7 @@ else:
 			dec[3] = random.randint(0,3)
 		
 		#Initializes ants
-		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k,int(dec[3]),k)		
+		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k, directions.get(int(dec[3])))		
 		a += 1
 		
 
@@ -229,15 +221,13 @@ while(run):
 	for iter in range(ppf):
 		for ant in Colony:		#1 turn for each ant
 			
-			ant.dir %= 4
-			
 			color = Map.get(tuple(ant.pos))
 			if color == None:	#New tile is rendered
 				color = 0
 			
 			Map.update({tuple(ant.pos) : (color+1) % (len(tiles)+1)}) 
 				
-			ant.command(ruleset[color])  #Move ant based on recovered rule
+			ant.command(angles.get(ruleset[color]))  #Move ant based on recovered rule
 						
 			ant.pos[0] %= ancho	#Wraps ant position
 			ant.pos[1] %= alto
