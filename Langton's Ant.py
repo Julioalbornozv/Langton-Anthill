@@ -9,6 +9,8 @@ import random
 import time
 import pdb
 import Tile_Gen as tg
+import Ant as A
+import Colony as col
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -50,33 +52,6 @@ def Paint_path(map):
 			glTranslate(coord[0],coord[1],0)
 			glCallList(hue)
 			glPopMatrix()
-			
-#-------------------- Ant Class --------------------#
-class Ant(object):
-	"""
-	Ant Class, it has a position and an orientation, the ant will move depending on the instruction that the current tile color represents
-	
-	@param x, y: Coordinates
-	@param dir: Orientation
-	@param k: Tile size
-	"""
-	
-	def __init__(self,x,y,dir):
-		self.pos = np.array([x,y])
-		self.dir = np.array(dir)
-		
-	def rot(self,theta):
-		"""
-		Calculates new orientation base on the rotation angle
-		"""
-		return np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]).astype(int)
-		
-	def command(self, theta):
-		"""
-		Rotates ant and moves forward
-		"""
-		self.dir = np.dot(self.dir, self.rot(theta))
-		self.pos += self.dir
 			
 #-------------------- Parameter Extraction --------------------#
 
@@ -142,6 +117,7 @@ init()
 run = True
 
 #-------------------- Tile Generation --------------------#
+
 Tgen = tg.Tile_Generator(len(ruleset)-1)
 
 assert scheme in ["R","L"]
@@ -155,26 +131,13 @@ tiles = Tgen.generate_tiles(k)
 
 #-------------------- Ant Generation --------------------#
 
-#TODO: Move colony to its own object
 directions = dict({0: (0,k), 1: (k,0), 2: (0,-k), 3: (-k,0)})
 angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
 
-if Colony == []: #No ants found
-	Colony = [Ant(int(ancho/2),int(alto/2),1,k)]	#Ant placed at default position
-else:
-	a = 0
-	for dec in Colony:
-		if dec[1] == "R":
-			dec[1] = random.randint(1,dim-1)
-		if dec[2] == "R":
-			dec[2] = random.randint(1,height-1)
-		if dec[3] == "R":
-			dec[3] = random.randint(0,3)
-		
-		#Initializes ants
-		Colony[a] = Ant(int(dec[1])*k,int(dec[2])*k, directions.get(int(dec[3])))		
-		a += 1
-		
+
+Anthill = col.Colony(directions, k, (dim,height))
+Anthill.load_ants("ants.txt")
+Colony = Anthill.ants
 
 #-------------------- Main Loop --------------------#
 
