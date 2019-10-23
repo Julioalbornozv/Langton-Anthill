@@ -6,12 +6,13 @@ class Ant(object):
 	
 	@param x, y: Coordinates
 	@param dir: Orientation
-	@param k: Tile size
+	@param ruleset: Set of instructions that this ant follows
 	"""
 	
-	def __init__(self,x,y,dir):
+	def __init__(self,x,y,dir,rules):
 		self.pos = np.array([x,y])
 		self.dir = np.array(dir)
+		self.ruleset = rules
 		
 	def rot(self,theta):
 		"""

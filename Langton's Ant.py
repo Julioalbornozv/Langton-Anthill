@@ -74,25 +74,6 @@ for line in file:
 dim = int(Param[0])
 height = int(Param[1])
 k = int(Param[2])
-ruleset = Param[3]
-
-if ruleset[0] == "K":	#Random ruleset
-	mode = ruleset[1]
-	length = int(ruleset[2:])
-	instructions = ["L","R","U","D"]
-	rand_rule = ""
-	for i in range(length):
-		if mode == "N":
-			ch = random.randint(0,1)
-		elif mode == "E":
-			ch = random.randint(0,3)
-		rand_rule += instructions[ch]
-	
-	ruleset = rand_rule
-	
-print(ruleset)
-
-assert len(ruleset) > 1, "Rulesets must contain at least 2 instructions"
 
 #Sets screen size when requested
 #TODO: Standardize x,y coordinates (Remove as many divisions as possible)
@@ -116,8 +97,19 @@ alto = int(height*k)
 init()
 run = True
 
-#-------------------- Tile Generation --------------------#
+#-------------------- Ant Generation --------------------#
 
+directions = dict({0: (0,k), 1: (k,0), 2: (0,-k), 3: (-k,0)})
+angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
+
+
+Anthill = col.Colony(directions, k, (dim,height))
+Anthill.load_ants("ants.txt")
+Colony = Anthill.ants
+
+
+#-------------------- Tile Generation --------------------#
+ruleset = Anthill.ants[0].ruleset
 Tgen = tg.Tile_Generator(len(ruleset)-1)
 
 assert scheme in ["R","L"]
@@ -129,17 +121,8 @@ elif scheme == "L":
 	
 tiles = Tgen.generate_tiles(k)
 
-#-------------------- Ant Generation --------------------#
 
-directions = dict({0: (0,k), 1: (k,0), 2: (0,-k), 3: (-k,0)})
-angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
-
-
-Anthill = col.Colony(directions, k, (dim,height))
-Anthill.load_ants("ants.txt")
-Colony = Anthill.ants
-
-#-------------------- Main Loop --------------------#
+#-------------------- Main Loop ------------------------#
 
 Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 ppf = 50	#Iterations per frame
@@ -189,8 +172,8 @@ while(run):
 				color = 0
 			
 			Map.update({tuple(ant.pos) : (color+1) % (len(tiles)+1)}) 
-				
-			ant.command(angles.get(ruleset[color]))  #Move ant based on recovered rule
+			
+			ant.command(angles.get(ant.ruleset[color]))  #Move ant based on recovered rule
 						
 			ant.pos[0] %= ancho	#Wraps ant position
 			ant.pos[1] %= alto
@@ -199,5 +182,5 @@ while(run):
 	Alg_time = Adt_2-Adt_1
 	Update_time = Alg_time/100
 	pygame.display.flip()
-	pygame.time.wait(int(1000/60)) #FPS
+	#pygame.time.wait(int(1000/60)) #FPS
 		
