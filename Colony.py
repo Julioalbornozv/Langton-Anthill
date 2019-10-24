@@ -33,7 +33,6 @@ class Colony(object):
 			if base[0] == "K":
 				base = self.random_ruleset(base[1:])
 				
-			print(base)
 			for line in file:	##Cleanup this code
 				data = line.strip("\n").split("\t")
 				

@@ -11,6 +11,7 @@ import pdb
 import Tile_Gen as tg
 import Ant as A
 import Colony as col
+import configparser as cfg
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -57,23 +58,13 @@ def Paint_path(map):
 
 #TODO: Move parsing logic to its own method/object
 
-Param, Colony = [], []
+config = cfg.ConfigParser()
+config.read('config.ini')
 
-file = open("Parameters_Ant.txt","r")
-for line in file:
-	raw = line.replace("\n","")
-	l = raw.split("\t")
-	
-	if l[0] == "ANT":	#Ant declaration
-		Colony.append(l)
-	elif l[0] == "COLOR":
-		scheme = l[1]
-	else:
-		Param.append(l[1])
-
-dim = int(Param[0])
-height = int(Param[1])
-k = int(Param[2])
+dim = config.getint('Display','WIDTH')
+height = config.getint('Display','HEIGHT')
+k = config.getint('Display', 'CELL_SIZE')
+scheme = config['Color']['SCHEME']
 
 #Sets screen size when requested
 #TODO: Standardize x,y coordinates (Remove as many divisions as possible)
