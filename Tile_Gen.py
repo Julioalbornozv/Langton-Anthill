@@ -5,21 +5,39 @@ from OpenGL.GLU import *
 import pdb
 
 class Tile_Generator(object):
-	def __init__(self, size):
+	def __init__(self, config):
 		"""
 		Class responsible to create the tiles which will be used by the program, currently this tiles are a set of gl
 		
-		@param: size, Expected number of colors to be generated
+		@param config: Configuration parameters
+		
+		@field size: Ruleset length
+		@field interp: Color interpolation method
+		@field shuffle: Determines if the generated colors are shuffled after generation
+		@field save: Determines if generated data is saved after the simulation
+		@field cell_size: Tile size in Pixels
 		@field: palette, List of colors values for each tile (0-255)
+		
 		"""
+		self.size = config.getint('Ruleset', 'LENGTH')-1
+		self.interp = config.get('Color', 'INTERPOLATION')
+		self.shuffle = config.getboolean('Color', 'SHUFFLE')
+		self.save = config.getboolean('Color', 'SAVE')
+		self.cell_size = config.getint('Display', 'CELL_SIZE')
 		self.palette = []
-		self.size = size
-	
+		
+		scheme = config.get('Color', 'SCHEME')
+		
+		if scheme == "RANDOM":
+			self.random_palette()
+		elif scheme == "LOAD":
+			self.load_palette()
+			
 	def load_palette(self, path = "colors.txt"):
 		"""
 		Loads a palette from a txt file
 		
-		@param: path, File path to be used
+		@param path: Path of the ant source file
 		"""
 		temp = []
 		with open(path, "r") as data:
@@ -32,35 +50,30 @@ class Tile_Generator(object):
 		"""
 		Saves the current palette into a file
 		
+		@param path: Path of the backup file
 		"""
 		f = open(path,"w")
 		for color in self.palette:
 			f.write(str(int(color[0]))+"\t"+str(int(color[1]))+"\t"+str(int(color[2]))+"\n")
 		
-	def random_palette(self, n):
+	def random_palette(self):
 		"""
-		Generates a color palette of n random colors 
-		
-		@param: n, Number of colors to be generated
+		Generates a random color palette 
 		"""
 		colors = []
-		for j in range(0,n):
+		for j in range(0,self.size):
 			colors.append([random.randint(0,255),random.randint(0,255),random.randint(0,255)])
 		
 		self.palette = np.asarray(colors)
 	
-	def fill_palette(self, interp = True, shuffle = True):
+	def fill_palette(self):
 		"""
 		This method extends the existing palette to a target number of colors.
-		
-		If interp is set to True, it will generate colors by interpolating between each color given. If false, the program will repeat colors until the palette size meets the target.
-		
-		@param interp, Boolean
 		
 		@returns Numpy array with the new colorset
 		"""
 		n = len(self.palette)
-		if interp:	#Generates color between the given ones
+		if self.interp == "RGB":	#Generates color between the given ones
 			req = self.size - n
 			gaps = np.zeros((n - 1))
 			gaps.fill(req // (n - 1))
@@ -84,17 +97,15 @@ class Tile_Generator(object):
 			for i in range(self.size):
 				new[i] = self.palette[i%n]
 		
-		if shuffle:
+		if self.shuffle:
 			np.random.shuffle(new)
 			
 		return new
 		
-	def generate_tiles(self, cell_size, save = True):
+	def generate_tiles(self):
 		"""
 		Generates tiles using OpenGL Display lists and the colors provided by the color palette , it will return a list of glList indexes, which can be used by glCallList to draw them on the screen.
 		
-		@param cell_size, tile side length in pixels
-		@param save, if True it will save the palette after its generated
 		@return Index List
 		"""
 		n = len(self.palette)
@@ -107,11 +118,11 @@ class Tile_Generator(object):
 		elif n > self.size:
 			self.palette = self.palette[:self.size]
 			
-		if save:
+		if self.save:
 			self.save_palette("save/colors.txt")
 		
 		colors = self.palette / 255.0 #Normlizes colors
-		k = cell_size/2
+		k = self.cell_size/2
 		tileset = []
 		
 		for t_num in range(self.size):	

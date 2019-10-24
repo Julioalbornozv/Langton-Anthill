@@ -2,27 +2,25 @@
 
 #TODO: Integrate logging library
 import pygame
+import configparser as cfg
 import numpy as np
-import sys
 import os
 import random
 import time
-import pdb
-import Tile_Gen as tg
-import Ant as A
-import Colony as col
-import configparser as cfg
+
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from win32api import GetSystemMetrics
 
+import Tile_Gen as tg
+import Ant as A
+import Colony as col
+
+import pdb
 def init():
 	#TODO Migrate from pygame to cyglfw
 	#TODO Add Docstring
-	if full:
-		os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
-	
 	pygame.init()
 	pygame.display.set_mode((ancho, alto), OPENGL| DOUBLEBUF)
 	pygame.display.set_caption("Langton's Ant")
@@ -56,28 +54,27 @@ def Paint_path(map):
 			
 #-------------------- Parameter Extraction --------------------#
 
-#TODO: Move parsing logic to its own method/object
-
+#Read initial parameters
 config = cfg.ConfigParser()
 config.read('config.ini')
 
-dim = config.getint('Display','WIDTH')
-height = config.getint('Display','HEIGHT')
 k = config.getint('Display', 'CELL_SIZE')
-scheme = config['Color']['SCHEME']
 
 #Sets screen size when requested
 #TODO: Standardize x,y coordinates (Remove as many divisions as possible)
-full = False
 
-if dim == -1 and height == -1:
-	full = True
+if config.getint('Display','WIDTH') == -1 and config.getint('Display','HEIGHT') == -1:
+	os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
+	
+if config.getint('Display','WIDTH') == -1:
+	config['Display']['WIDTH'] = str(GetSystemMetrics(0)//k)
+	
+if config.getint('Display','HEIGHT') == -1:
+	config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//k)
+	
+dim = config.getint('Display','WIDTH')
+height = config.getint('Display','HEIGHT')
 
-if dim == -1:
-	dim = GetSystemMetrics(0)//k
-
-if height == -1:
-	height = GetSystemMetrics(1)//k
 
 #Visual Display
 ancho = int(dim*k)
@@ -93,27 +90,14 @@ run = True
 directions = dict({0: (0,k), 1: (k,0), 2: (0,-k), 3: (-k,0)})
 angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
 
-
-Anthill = col.Colony(directions, k, (dim,height))
+Anthill = col.Colony(directions, config)
 Anthill.load_ants("ants.txt")
-Colony = Anthill.ants
-
 
 #-------------------- Tile Generation --------------------#
-ruleset = Anthill.ants[0].ruleset
-Tgen = tg.Tile_Generator(len(ruleset)-1)
+Tgen = tg.Tile_Generator(config)
+tiles = Tgen.generate_tiles()
 
-assert scheme in ["R","L"]
-
-if scheme == "R":
-	Tgen.random_palette(len(ruleset)-1)
-elif scheme == "L":
-	Tgen.load_palette()
-	
-tiles = Tgen.generate_tiles(k)
-
-
-#-------------------- Main Loop ------------------------#
+#-------------------- Main Loop --------------------------#
 
 Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 ppf = 50	#Iterations per frame
@@ -156,7 +140,7 @@ while(run):
 	Adt_1 = time.time()
 	
 	for iter in range(ppf):
-		for ant in Colony:		#1 turn for each ant
+		for ant in Anthill.ants:		#1 turn for each ant
 			
 			color = Map.get(tuple(ant.pos))
 			if color == None:	#New tile is rendered

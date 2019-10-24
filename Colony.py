@@ -7,18 +7,30 @@ class Colony(object):
 	"""
 	Ant container class, handles ant generation.
 	
-	@param dir: Dictionary containing unitary vectors for each direction
-	@param size: Int, size of a tile
-	@param screen_size: Tuple containing the dimensions of the screen
+	@param directions: Dictionary containing unitary vectors for each direction
+	@param config: Configuration parameters
 	
+	@field size: Tile Size in pixels
+	@field screen: Size of the screen
+	@field default: Default Ruleset
+	@field sym: Symbols used to describe a ruleset
+	@field length: Length of each ant ruleset
 	@field ants: List containing the Ant objects
 	"""
-	def __init__(self, directions, cell_size, screen_size):
+	def __init__(self, directions, config):
 		self.dir = directions
-		self.size = cell_size
-		self.screen = screen_size
+		self.size = config.getint('Display', 'CELL_SIZE')
+		self.screen = (config.getint('Display', 'WIDTH'), 
+						config.getint('Display', 'HEIGHT'))
+		self.default = config.get('Ruleset', 'DEFAULT')
+				
+		self.sym = list(config.get('Ruleset', 'SYMBOLS'))
+		self.length = config.getint('Ruleset', 'LENGTH')
 		
 		self.ants = []
+		
+		if self.default == 'RANDOM':
+			self.default = self.random_ruleset()
 		
 	def load_ants(self, path):
 		"""
@@ -27,20 +39,19 @@ class Colony(object):
 		@param: path, File path to be used
 		"""
 		with open(path, "r") as file:
-			first = file.readline()
-			base = first.strip("\n").split("\t")[1]
-			
-			if base[0] == "K":
-				base = self.random_ruleset(base[1:])
-				
 			for line in file:	##Cleanup this code
 				data = line.strip("\n").split("\t")
 				
 				if len(data) == 4:	#Ruleset exists
-					rule = data[3]
+					if data[3] == 'RANDOM':
+						rule = self.random_ruleset()
+					else:
+						assert len(data[3]) == self.length, "Ruleset Error: Inconsistent ruleset size"
+						rule = data[3]
 				else:
-					rule = base
+					rule = self.default
 				
+				print(rule)
 				if data[0] == "R":
 					data[0] = random.randint(1,self.screen[0]-1)
 				elif data[1] == "R":
@@ -54,25 +65,17 @@ class Colony(object):
 							
 				self.ants.append(bug)
 				
-	def random_ruleset(self, specs):
+	def random_ruleset(self):
 		"""
 		Generates a random set of instructions from the given specifications
-		
-		@param specs: 	String, first char defines what instructions will be used while the rest represent the number of elements the ruleset will have
 		
 		@returns:	String containing the new ruleset
 		
 		"""
-		mode = specs[0]
-		length = int(specs[1:])
-		instructions = ["L","R","U","D"]	#TODO: Find a way to obtain this instructions
 		rand_rule = ""
-		for i in range(length):
-			if mode == "N":
-				ch = random.randint(0,1)
-			elif mode == "E":
-				ch = random.randint(0,3)
-			rand_rule += instructions[ch]
+		for i in range(self.length):
+			ch = random.randint(0, len(self.sym)-1)
+			rand_rule += self.sym[ch]
 		
 		return rand_rule
 
