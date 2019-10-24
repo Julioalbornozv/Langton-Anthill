@@ -6,7 +6,7 @@ class Ant(object):
 	
 	@param x, y: Coordinates
 	@param dir: Orientation
-	@param ruleset: Set of instructions that this ant follows
+	@param ruleset: Set of instructions that this particular ant follows
 	"""
 	
 	def __init__(self,x,y,dir,rules):

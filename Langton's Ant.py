@@ -19,8 +19,10 @@ import Colony as col
 
 import pdb
 def init():
+	"""
+	Initializes OpenGL Display
+	"""
 	#TODO Migrate from pygame to cyglfw
-	#TODO Add Docstring
 	pygame.init()
 	pygame.display.set_mode((ancho, alto), OPENGL| DOUBLEBUF)
 	pygame.display.set_caption("Langton's Ant")

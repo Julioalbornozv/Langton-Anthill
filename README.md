@@ -6,53 +6,56 @@
 
 Real-Time implementation of the Langton's Ant Cellular Automata in python 3.7 [Wikipedia](https://en.wikipedia.org/wiki/Langton%27s_ant)
 
-# Current Status
-This project is able to simulate a color extended version of the celular automata, 
-by changing the parameters located in the file "Parameters_Ant.txt" its possible to customise the number and position of the ants, ruleset used and screen dimensions.
-
-The project is still a work in progress, its recommended to simulate a small number of ants.
-
 # Usage
-Available settings are listed below:	(Values are separated using tabs)
-
-    WIDTH: Number of tiles on the x axis, writing -1 will use a number of tiles equivalent to the screen width
-	HEIGHT: Similar to width but for the y axis, setting both on -1 starts a fullsreen window
-	CELL SIZE: Size of the grid cells in pixels
-	RULESET: Three options are available:
-	                 - A sequence of instructions 
-			   (Ex: LRRLRLRLRL)
-			 - KN followed by a number will generate a random ruleset with a specific  size 
-			   (Ex: KN7 => LRLRRLR )
-			 - Using KE instead of KN generates a ruleset which includes a 0° and 180°  rotation 
-			   instructions (U and D)
-			   (Ex: KE14 => LRURULDDLLDRDL
-	COLOR: Two Modes are available:
-				R: Random Colorset
-				L: Loads colorset from the "colors.txt" file
-			
-			If not enough colors are provided the program will interpolate new colors from the given set
-	
-
-	//Finally, the following lines consist of multiple strings representing the ants starting tile and 
-	  orientation. Each line uses the following syntax:
-	
-	ANT	X	Y	O	will create an ant on the position (X, Y) in the grid facing the 
-	                                orientation specified in O (Orientation: N = 0, E = 1, S = 2, W = 3)
-
-To run the simulation with the given parameters execute:
+To run the program execute:
 
     python "Langton's Ant.py"
 
 Press Esc to quit the simulation, pressing the w and s  keys will adjust the number of iterations simulated per frame. The simulation can be stopped temporarily by reducing the speed to its minimum value.
 
-Colors used in a session will be saved in the save folder
+# Customization
+By default the program simulates the RL ruleset (Simple Langton ant), modifying the simulation is accomplished by changing any of the following configuration files.
 
-# Dependencies
-The program currently uses the following libraries: 
-numpy, pygame, OpenGL.GL, OpenGL.GLU and win32api
+## config.ini
+Initialization settings of the program, seprated in three sections:
+### Display Section
+* `WIDTH` & `HEIGHT`: Size of the grid which will be displayed, where each contains the number of tiles for the x and y axis. Placing `-1` on this fields will match the display with the screen size (Fullscreen if both).
+* `CELL_SIZE`: Size of each tile in pixels
+
+### Color Section
+* `SCHEME`: Two possible settings, `LOAD` will read the colors found in "colors.txt" while `RANDOM`generates a new colorset with random colors.
+* `INTERPOLATION`: Toggles color interpolation on a specific colorspace, interpolation is used to generate a colorset for a big ruleset without specifying each color individually. Available options are `RGB` interpolation and `NONE`  which will use the same colors repeatedly instead of generating new colors. 
+* `SHUFFLE`: If is set to `YES`it will scramble the colors of the colorset after being generated.
+* `SAVE`: If set to `YES` it will write a backup of the colors used in this session.
+
+### Ruleset Section
+* `LENGTH`: Number of instructions the ruleset will use
+* `SYMBOLS`: A string where each character represents an instruction
+* `DEFAULT`: Ruleset which is used by all ants by default, if set to `RANDOM` it will generate a string of size `LENGTH` using the symbols given beforehand.
+
+## ants.txt: 
+TSV file where each row contains the data of a single ant, the format is as follows:
+
+    X	Y	Orientation	Ruleset*
+
+* `X` & `Y`: Starting tile of the ant.
+* `Orientation`: Number representing which direction the ant faces. (Current options: {0: North, 1:East, 2:South, 3:West})
+* `Ruleset`: Optional column, placing a ruleset here will override the default ruleset for the ant, ommiting this column will make the ant follow the default ruleset.
+
+The first three settings can be randomized by writing `R`, in the case of the Ruleset writing `RANDOM` will generate a ruleset with the same length as the default ruleset given.
+
+## color.txt
+TSV file where each row contains the RGB representation of a color, with one column for each color channel.
+
+# External Libraries 
+- numpy
+- pygame 
+- OpenGL.GL
+- OpenGL.GLU
+- win32
+- configparser
 
 # TODO
 * Unit Tests
 * Code Refactoring
-* Better Parameter input
 * Improve Performance

@@ -39,7 +39,7 @@ class Colony(object):
 		@param: path, File path to be used
 		"""
 		with open(path, "r") as file:
-			for line in file:	##Cleanup this code
+			for line in file:
 				data = line.strip("\n").split("\t")
 				
 				if len(data) == 4:	#Ruleset exists

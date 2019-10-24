@@ -110,8 +110,6 @@ class Tile_Generator(object):
 		"""
 		n = len(self.palette)
 		
-		assert n >=2, "Colorset Error: Not enough colors given"
-		
 		if n < self.size:
 			self.palette = self.fill_palette()
 			
