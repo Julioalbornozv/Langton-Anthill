@@ -16,6 +16,8 @@ Press Esc to quit the simulation, pressing the w and s  keys will adjust the num
 # Customization
 By default the program simulates the RL ruleset (Simple Langton ant), modifying the simulation is accomplished by changing any of the following configuration files.
 
+Examples of usage can be found in the example folder, where for each example it includes a photo of the simulation after a number of iterations + the settings for each file.
+
 ## config.ini
 Initialization settings of the program, seprated in three sections:
 ### Display Section
@@ -32,6 +34,7 @@ Initialization settings of the program, seprated in three sections:
 * `LENGTH`: Number of instructions the ruleset will use
 * `SYMBOLS`: A string where each character represents an instruction
 * `DEFAULT`: Ruleset which is used by all ants by default, if set to `RANDOM` it will generate a string of size `LENGTH` using the symbols given beforehand.
+* `SAVE`: If set to `YES` it will write a backup of the ants used in this session.
 
 ## ants.txt: 
 TSV file where each row contains the data of a single ant, the format is as follows:
@@ -50,8 +53,7 @@ TSV file where each row contains the RGB representation of a color, with one col
 # External Libraries 
 - numpy
 - pygame 
-- OpenGL.GL
-- OpenGL.GLU
+- PyOpenGL
 - win32
 - configparser
 
