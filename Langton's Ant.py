@@ -104,8 +104,6 @@ tiles = Tgen.generate_tiles()
 Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 ppf = 50	#Iterations per frame
 
-Disp_time, Alg_time, Update_time = 0, 0, 0
-
 while(run):	
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -122,24 +120,10 @@ while(run):
 				ppf -= 10
 				if ppf < 0:
 					ppf = 0
-			elif event.key == K_p:		#Performance check #TODO Move this to its own test environement
-				print("-------------------------------------------------------")
-				print("N° of tiles painted: {} tiles".format(len(list(Map.keys()))))
-				print("N° of tile ID's: {}".format(len(tiles)))
-				print("Display took {} seconds to paint the screen".format(Disp_time))
-				print("Algorithm took {} seconds to complete {} cycles".format(Alg_time,ppf))
-				print("Algorithm took {} seconds to update {} ants on average".format(Update_time,len(Colony)))
-					
+			
 	glClear(GL_COLOR_BUFFER_BIT)
 	
-	Ddt_1 = time.time()
-	
 	Paint_path(Map)
-	
-	Ddt_2 = time.time()
-	Disp_time = Ddt_2 - Ddt_1
-	
-	Adt_1 = time.time()
 	
 	for iter in range(ppf):
 		for ant in Anthill.ants:		#1 turn for each ant
@@ -155,9 +139,6 @@ while(run):
 			ant.pos[0] %= ancho	#Wraps ant position
 			ant.pos[1] %= alto
 		
-	Adt_2 = time.time()
-	Alg_time = Adt_2-Adt_1
-	Update_time = Alg_time/100
 	pygame.display.flip()
 	#pygame.time.wait(int(1000/60)) #FPS
 		

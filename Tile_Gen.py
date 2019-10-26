@@ -55,6 +55,7 @@ class Tile_Generator(object):
 		f = open(path,"w")
 		for color in self.palette:
 			f.write(str(int(color[0]))+"\t"+str(int(color[1]))+"\t"+str(int(color[2]))+"\n")
+		f.close()
 		
 	def random_palette(self):
 		"""

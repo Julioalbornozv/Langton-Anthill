@@ -26,6 +26,7 @@ class Colony(object):
 				
 		self.sym = list(config.get('Ruleset', 'SYMBOLS'))
 		self.length = config.getint('Ruleset', 'LENGTH')
+		self.save = config.getboolean('Ruleset', 'SAVE')
 		
 		self.ants = []
 		
@@ -54,10 +55,10 @@ class Colony(object):
 				print(rule)
 				if data[0] == "R":
 					data[0] = random.randint(1,self.screen[0]-1)
-				elif data[1] == "R":
+				if data[1] == "R":
 					data[1] = random.randint(1,self.screen[1]-1)
-				elif data[2] == "R":
-					data[2] = random.randint(0,len(self.dir.keys()))
+				if data[2] == "R":
+					data[2] = random.randint(0,len(self.dir.keys())-1)
 				
 				bug = at.Ant(int(data[0])*self.size,
 							int(data[1])*self.size,
@@ -65,6 +66,27 @@ class Colony(object):
 							
 				self.ants.append(bug)
 				
+		if self.save:
+			self.save_ants("save/ants.txt")
+	
+	def save_ants(self, path):
+		"""
+		Saves data of generated ants in a backup txt file
+		
+		@param path: Location of the backup
+		"""
+		f = open(path,"w")
+		
+		for ant in self.ants:
+			for k in self.dir.keys():
+				if np.array_equal(self.dir.get(k), ant.dir):
+					face = str(k)
+					break
+			f.write(str(ant.pos[0]//self.size)+"\t"+str(ant.pos[1]//self.size)+"\t"+face+"\t"+ant.ruleset+"\n")
+		f.close()
+		
+		
+		
 	def random_ruleset(self):
 		"""
 		Generates a random set of instructions from the given specifications
