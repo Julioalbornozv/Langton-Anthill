@@ -1,6 +1,6 @@
 
 
-![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/Example_Patterns/LLLLLRRRRR.png?token=AL2LSZZH6EL5YYKX4S2GNXK5TUX36)
+![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/examples/Ex1/Example_1.png)
 
 # Langton's Anthill
 
