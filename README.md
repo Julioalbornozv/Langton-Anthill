@@ -4,22 +4,21 @@
 
 # Langton's Anthill
 
-Real-Time implementation of the Langton's Ant Cellular Automata in python 3.7 [Wikipedia](https://en.wikipedia.org/wiki/Langton%27s_ant)
+Real-Time implementation of the [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant) Cellular Automata using python
 
 # Usage
 To run the program execute:
 
     python "Langton's Ant.py"
 
-Press Esc to quit the simulation, pressing the w and s  keys will adjust the number of iterations simulated per frame. The simulation can be stopped temporarily by reducing the speed to its minimum value.
-
+Press Esc to quit the simulation, pressing the w and s  keys will adjust the number of iterations simulated per frame. 
 # Customization
 By default the program simulates the RL ruleset (Simple Langton ant), modifying the simulation is accomplished by changing any of the following configuration files.
 
 Examples of usage can be found in the example folder, where for each example it includes a photo of the simulation after a number of iterations + the settings for each file.
 
 ## config.ini
-Initialization settings of the program, seprated in three sections:
+Initialization settings of the program, separated in three sections:
 ### Display Section
 * `WIDTH` & `HEIGHT`: Size of the grid which will be displayed, where each contains the number of tiles for the x and y axis. Placing `-1` on this fields will match the display with the screen size (Fullscreen if both).
 * `CELL_SIZE`: Size of each tile in pixels

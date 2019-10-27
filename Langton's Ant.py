@@ -23,4 +23,3 @@ TGen = tg.Tile_Generator(config)
 
 ### Program Starts
 render.run(Anthill, TGen)
-		

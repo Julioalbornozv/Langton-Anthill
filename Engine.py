@@ -61,7 +61,8 @@ class Engine(object):
 		Rendering loop
 		"""
 		Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
-		ppf = 50	#Iterations per frame
+		speed = 50	#Iterations per frame
+		pre_speed = 0
 		tiles = TileGen.generate_tiles()
 		
 		#TODO: Make angles configurable
@@ -77,20 +78,36 @@ class Engine(object):
 				if event.type == KEYDOWN:
 					if event.key == K_ESCAPE:
 						run = False
-					elif event.key == K_w:
-						ppf += 10
-						if ppf > 100:
-							ppf = 100
-					elif event.key == K_s:
-						ppf -= 10
-						if ppf < 0:
-							ppf = 0
 					
+					#Speed management
+					elif event.key == K_w and speed <= 100:
+						speed += 10
+					elif event.key == K_s and speed >= 10:
+						speed -= 10
+						
+					elif event.key == K_p: 
+						if pre_speed == 0:
+							pre_speed = speed
+							speed = 0
+						
+						else:
+							speed = pre_speed
+							pre_speed = 0
+					
+					#Shuffles color palette
+					elif event.key == K_r:
+						tiles = TileGen.reset()
+					
+					#Generate new random palette
+					elif event.key == K_g:
+						TileGen.random_palette(TileGen.base)
+						tiles = TileGen.reset()
+						
 			glClear(GL_COLOR_BUFFER_BIT)
 			
 			self.render_tiles(Map)
 			
-			for iter in range(ppf):
+			for iter in range(speed):
 				for ant in Anthill.ants:		#1 turn for each ant
 					
 					color = Map.get(tuple(ant.pos))

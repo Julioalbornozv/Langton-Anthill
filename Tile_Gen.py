@@ -11,6 +11,7 @@ class Tile_Generator(object):
 		@param config: Configuration parameters
 		
 		@field size: Ruleset length
+		@field base: Number of colors used to generate the colors
 		@field interp: Color interpolation method
 		@field shuffle: Determines if the generated colors are shuffled after generation
 		@field save: Determines if generated data is saved after the simulation
@@ -23,12 +24,13 @@ class Tile_Generator(object):
 		self.shuffle = config.getboolean('Color', 'SHUFFLE')
 		self.save = config.getboolean('Color', 'SAVE')
 		self.cell_size = config.getint('Display', 'CELL_SIZE')
+		self.base = config.getint('Color', 'BASE')
 		self.palette = []
 		
 		scheme = config.get('Color', 'SCHEME')
 		
 		if scheme == "RANDOM":
-			self.random_palette()
+			self.random_palette(self.base)
 		elif scheme == "LOAD":
 			self.load_palette()
 			
@@ -56,12 +58,25 @@ class Tile_Generator(object):
 			f.write(str(int(color[0]))+"\t"+str(int(color[1]))+"\t"+str(int(color[2]))+"\n")
 		f.close()
 		
-	def random_palette(self):
+	def reset(self):
+		"""
+		Replaces the current palette with a new one
+		
+		@return: New palette ID's
+		"""
+		glDeleteLists(1, self.size)
+		np.random.shuffle(self.palette)
+		
+		return self.generate_tiles()
+	
+	def random_palette(self, n):
 		"""
 		Generates a random color palette 
+		
+		@param n; Number of colors to generate
 		"""
 		colors = []
-		for j in range(0,self.size):
+		for j in range(0,n):
 			colors.append([random.randint(0,255),random.randint(0,255),random.randint(0,255)])
 		
 		self.palette = np.asarray(colors)
