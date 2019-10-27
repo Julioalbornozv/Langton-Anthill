@@ -2,7 +2,6 @@ import numpy as np
 import random
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import pdb
 
 class Tile_Generator(object):
 	def __init__(self, config):

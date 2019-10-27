@@ -1,13 +1,11 @@
 import numpy as np
 import Ant as at
 import random
-import pdb
 
 class Colony(object):
 	"""
 	Ant container class, handles ant generation.
 	
-	@param directions: Dictionary containing unitary vectors for each direction
 	@param config: Configuration parameters
 	
 	@field size: Tile Size in pixels
@@ -15,10 +13,11 @@ class Colony(object):
 	@field default: Default Ruleset
 	@field sym: Symbols used to describe a ruleset
 	@field length: Length of each ant ruleset
+	@field dir: Dictionary containing unitary vectors for each direction
 	@field ants: List containing the Ant objects
 	"""
-	def __init__(self, directions, config):
-		self.dir = directions
+	def __init__(self, config):
+		
 		self.size = config.getint('Display', 'CELL_SIZE')
 		self.screen = (config.getint('Display', 'WIDTH'), 
 						config.getint('Display', 'HEIGHT'))
@@ -27,6 +26,9 @@ class Colony(object):
 		self.sym = list(config.get('Ruleset', 'SYMBOLS'))
 		self.length = config.getint('Ruleset', 'LENGTH')
 		self.save = config.getboolean('Ruleset', 'SAVE')
+		
+		#TODO: Make directions configurable
+		self.dir = dict({0: (0,self.size), 1: (self.size,0), 2: (0,-self.size), 3: (-self.size,0)})
 		
 		self.ants = []
 		
