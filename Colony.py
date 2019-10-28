@@ -16,9 +16,8 @@ class Colony(object):
 	@field dir: Dictionary containing unitary vectors for each direction
 	@field ants: List containing the Ant objects
 	"""
-	def __init__(self, config):
+	def __init__(self, config, tile):
 		
-		self.size = config.getint('Display', 'CELL_SIZE')
 		self.screen = (config.getint('Display', 'WIDTH'), 
 						config.getint('Display', 'HEIGHT'))
 		self.default = config.get('Ruleset', 'DEFAULT')
@@ -27,8 +26,7 @@ class Colony(object):
 		self.length = config.getint('Ruleset', 'LENGTH')
 		self.save = config.getboolean('Ruleset', 'SAVE')
 		
-		#TODO: Make directions configurable
-		self.dir = dict({0: (0,self.size), 1: (self.size,0), 2: (0,-self.size), 3: (-self.size,0)})
+		self.Ttype = tile
 		
 		self.ants = []
 		
@@ -60,11 +58,11 @@ class Colony(object):
 				if data[1] == "R":
 					data[1] = random.randint(1,self.screen[1]-1)
 				if data[2] == "R":
-					data[2] = random.randint(0,len(self.dir.keys())-1)
+					data[2] = random.randint(0,len(self.Ttype.directions.keys())-1)
 				
-				bug = at.Ant(int(data[0])*self.size,
-							int(data[1])*self.size,
-							self.dir.get(int(data[2])), rule)
+				bug = at.Ant(int(data[0]) * self.Ttype.size,
+							int(data[1]) * self.Ttype.size,
+							int(data[2]), rule, self.Ttype)
 							
 				self.ants.append(bug)
 				
@@ -78,13 +76,14 @@ class Colony(object):
 		@param path: Location of the backup
 		"""
 		f = open(path,"w")
-		
+		dir = self.Ttype.directions
+		size = self.Ttype.size
 		for ant in self.ants:
-			for k in self.dir.keys():
-				if np.array_equal(self.dir.get(k), ant.dir):
+			for k in dir.keys():
+				if np.array_equal(dir.get(k), ant.dir):
 					face = str(k)
 					break
-			f.write(str(ant.pos[0]//self.size)+"\t"+str(ant.pos[1]//self.size)+"\t"+face+"\t"+ant.ruleset+"\n")
+			f.write(str(ant.pos[0]//size)+"\t"+str(ant.pos[1]//size)+"\t"+face+"\t"+ant.ruleset+"\n")
 		f.close()
 		
 		

@@ -7,11 +7,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from win32api import GetSystemMetrics
 
+import pdb
 class Engine(object):
 	"""
 	Class concerning simulation rendering and user interaction
 	"""
-	def __init__(self, config):
+	def __init__(self, config, Tgen):
 		"""
 		Creates OpenGL display and sets basic elements
 		
@@ -21,24 +22,25 @@ class Engine(object):
 		@field width: Window's width
 		@field height: Window's height
 		"""
-		self.tile_size = config.getint('Display', 'CELL_SIZE')
+		self.TileGen = Tgen
+		size = self.TileGen.size
 		
 		### Detects if fullscreen for an axis is active
 		conf_width = config.getint('Display','WIDTH')
 		conf_height = config.getint('Display','HEIGHT')
 		
 		if conf_width == -1:
-			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//self.tile_size)
+			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//size)
 		
 		if conf_height == -1:
-			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//self.tile_size)
+			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//size)
 			
 		if conf_width == -1 and conf_height == -1:
 			os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 			
 		### Screen size
-		self.width = int(config.getint('Display','WIDTH') * self.tile_size)
-		self.height = int(config.getint('Display','HEIGHT') * self.tile_size)
+		self.width = int(config.getint('Display','WIDTH') * size)
+		self.height = int(config.getint('Display','HEIGHT') * size)
 		
 		### OpenGL screen initialization
 		pygame.init()
@@ -56,18 +58,16 @@ class Engine(object):
 		glShadeModel(GL_SMOOTH)
 		glClearDepth(1.0)
 	
-	def run(self, Anthill, TileGen):
+	def run(self, Anthill, ColorGen):
 		"""
 		Rendering loop
 		"""
+		tile_IDs = self.TileGen.construct(ColorGen.palette)
 		Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
+		
 		speed = 50	#Iterations per frame
 		pre_speed = 0
-		tiles = TileGen.generate_tiles()
 		
-		#TODO: Make angles configurable
-		angles = dict({"L": -np.pi/2, "R": np.pi/2, "U": 0, "D": np.pi})
-
 		run = True
 		while(run):	
 			### User Interaction
@@ -89,19 +89,21 @@ class Engine(object):
 						if pre_speed == 0:
 							pre_speed = speed
 							speed = 0
-						
 						else:
 							speed = pre_speed
 							pre_speed = 0
 					
 					#Shuffles color palette
 					elif event.key == K_r:
-						tiles = TileGen.reset()
+						np.random.shuffle(ColorGen.palette)
+						tile_IDs = self.TileGen.reset(ColorGen.palette)
 					
 					#Generate new random palette
 					elif event.key == K_g:
-						TileGen.random_palette(TileGen.base)
-						tiles = TileGen.reset()
+						ColorGen.random_palette(ColorGen.base)
+						ColorGen.generate_colors()
+						np.random.shuffle(ColorGen.palette)
+						tile_IDs = self.TileGen.reset(ColorGen.palette)
 						
 			glClear(GL_COLOR_BUFFER_BIT)
 			
@@ -114,16 +116,15 @@ class Engine(object):
 					if color == None:	#New tile is rendered
 						color = 0
 					
-					Map.update({tuple(ant.pos) : (color+1) % (len(tiles)+1)}) 
+					Map.update({tuple(ant.pos) : (color+1) % (len(tile_IDs)+1)}) 
 					
-					ant.command(angles.get(ant.ruleset[color]))  #Move ant based on recovered rule
+					ant.command(color)  #Move ant based on recovered rule
 								
 					ant.pos[0] %= self.width	#Wraps ant position
 					ant.pos[1] %= self.height
 				
 			pygame.display.flip()
-		
-	
+			
 	def render_tiles(self, map):
 		"""
 		Paint tiles of the current frame

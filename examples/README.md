@@ -11,4 +11,4 @@ To reproduce this results, move the configuration files to the folder where the 
 
 * 2 ants with different rulesets which include 'U' and 'D' instructions
 
-![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/examples/Ex2/Example_2.png)
+![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/examples/Ex3/Example_3.png)
