@@ -1,4 +1,5 @@
 import numpy as np
+import pdb
 
 class Ant(object):
 	"""
@@ -10,21 +11,15 @@ class Ant(object):
 	
 	def __init__(self,x,y, dir, rules, tile):
 		self.tile = tile
-		self.dir = tile.directions.get(dir)
+		self.dir = dir
 		self.pos = np.array([x,y])
 		self.ruleset = rules
-		
-		
-	def rot(self,theta):
-		"""
-		Calculates new orientation base on the rotation angle
-		"""
-		return np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]).astype(int)
-		
+			
 	def command(self, index):
 		"""
 		Rotates ant and moves forward
 		"""
-		theta = self.tile.angles.get(self.ruleset[index])
-		self.dir = np.dot(self.dir, self.rot(theta))
-		self.pos += self.dir
+		#pdb.set_trace()
+		self.dir = (self.dir + self.tile.offset.get(self.ruleset[index])) % len(self.tile.offset)
+		self.pos += np.array(self.tile.directions.get(self.dir))
+		

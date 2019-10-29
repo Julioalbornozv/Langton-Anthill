@@ -80,7 +80,7 @@ class Colony(object):
 		size = self.Ttype.size
 		for ant in self.ants:
 			for k in dir.keys():
-				if np.array_equal(dir.get(k), ant.dir):
+				if k== ant.dir:
 					face = str(k)
 					break
 			f.write(str(ant.pos[0]//size)+"\t"+str(ant.pos[1]//size)+"\t"+face+"\t"+ant.ruleset+"\n")

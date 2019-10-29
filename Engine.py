@@ -119,7 +119,7 @@ class Engine(object):
 					Map.update({tuple(ant.pos) : (color+1) % (len(tile_IDs)+1)}) 
 					
 					ant.command(color)  #Move ant based on recovered rule
-								
+					
 					ant.pos[0] %= self.width	#Wraps ant position
 					ant.pos[1] %= self.height
 				

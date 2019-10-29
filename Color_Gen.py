@@ -1,7 +1,5 @@
 import numpy as np
 import random
-from OpenGL.GL import *
-from OpenGL.GLU import *
 
 class Color_Generator(object):
 	def __init__(self, config):

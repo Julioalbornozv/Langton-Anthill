@@ -8,7 +8,7 @@ class Tile_Generator(object):
 		self.size = config.getint('Tile', 'SIZE')
 		self.shape = config['Tile']['SHAPE']
 		
-		self.types = dict({"SQUARE": Tile.Square_Tile})
+		self.types = dict({"SQUARE": Tile.Square_Tile, "HEXAGON": Tile.Hexagonal_Tile})
 		
 		self.template = self.form()
 		
