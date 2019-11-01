@@ -45,6 +45,8 @@ class Tile(ABC):
 class Square_Tile(Tile):
 	def __init__(self, config):
 		super().__init__(config)
+		self.x = self.size
+		self.y = self.size
 	
 	@property
 	def directions(self):
@@ -79,7 +81,11 @@ class Square_Tile(Tile):
 class Hexagonal_Tile(Tile):
 	def __init__(self, config):
 		super().__init__(config)
-	
+		R = self.size / 2
+		r = int(R * np.cos(np.pi/6))
+		d = int(3*R/2)
+		self.x = 2*d
+		self.y = 2*r
 	@property
 	def directions(self):
 		R = self.size / 2

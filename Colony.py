@@ -60,8 +60,8 @@ class Colony(object):
 				if data[2] == "R":
 					data[2] = random.randint(0,len(self.Ttype.directions.keys())-1)
 				
-				bug = at.Ant(int(data[0]) * self.Ttype.size,
-							int(data[1]) * self.Ttype.size,
+				bug = at.Ant(int(data[0]) * self.Ttype.x,
+							int(data[1]) * self.Ttype.y,
 							int(data[2]), rule, self.Ttype)
 							
 				self.ants.append(bug)

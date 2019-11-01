@@ -24,23 +24,25 @@ class Engine(object):
 		"""
 		self.TileGen = Tgen
 		size = self.TileGen.size
+		temp = self.TileGen.template
 		
 		### Detects if fullscreen for an axis is active
 		conf_width = config.getint('Display','WIDTH')
 		conf_height = config.getint('Display','HEIGHT')
 		
 		if conf_width == -1:
-			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//size)
-		
+			#pdb.set_trace()
+			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//temp.x)
+			
 		if conf_height == -1:
-			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//size)
+			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//temp.y)
 			
 		if conf_width == -1 and conf_height == -1:
 			os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 			
 		### Screen size
-		self.width = int(config.getint('Display','WIDTH') * size)
-		self.height = int(config.getint('Display','HEIGHT') * size)
+		self.width = int(config.getint('Display','WIDTH') * temp.x)
+		self.height = int(config.getint('Display','HEIGHT') * temp.y)
 		
 		### OpenGL screen initialization
 		pygame.init()
@@ -85,7 +87,8 @@ class Engine(object):
 					elif event.key == K_s and speed >= 10:
 						speed -= 10
 						
-					elif event.key == K_p: 
+					elif event.key == K_p:
+						pdb.set_trace()
 						if pre_speed == 0:
 							pre_speed = speed
 							speed = 0
@@ -124,6 +127,7 @@ class Engine(object):
 					ant.pos[1] %= self.height
 				
 			pygame.display.flip()
+			#pygame.time.wait(int(1000))
 			
 	def render_tiles(self, map):
 		"""
