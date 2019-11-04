@@ -4,11 +4,19 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 	
 import pdb
+
 class Tile(ABC):
-	"""
-	Class containing the information of a tile inside the grid.
-	"""
 	def __init__(self, size):
+		"""
+		Class which contains the information required to construct a Tile of a specific shape. 
+		
+		@param size: Scale used by the program
+		@param x: Tile Width
+		@param y: Tile Height
+		
+		@field directions: Ant movement vectors asociated with the ant current orientation
+		@field offset: Result of rotating the ant after reading a specific rule
+		"""
 		self.size = size
 	
 	@property
@@ -35,7 +43,7 @@ class Tile(ABC):
 	@abstractmethod
 	def compile(self, color):
 		"""
-		OpenGL Display List used to describe the tile
+		OpenGL Display List used to draw the tile
 		
 		@param color: Color associated with this tile
 		"""

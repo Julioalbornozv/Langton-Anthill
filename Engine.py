@@ -17,8 +17,8 @@ class Engine(object):
 		Creates OpenGL display and sets basic elements
 		
 		@param config:	Config object with the starting parameters
+		@param Tgen: Tile Generator object
 		
-		@field tile_size: Size of the tile in pixels
 		@field width: Window's width
 		@field height: Window's height
 		"""
@@ -31,7 +31,6 @@ class Engine(object):
 		conf_height = config.getint('Display','HEIGHT')
 		
 		if conf_width == -1:
-			#pdb.set_trace()
 			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//temp.x)
 			
 		if conf_height == -1:
@@ -62,7 +61,7 @@ class Engine(object):
 	
 	def run(self, Anthill, ColorGen):
 		"""
-		Rendering loop
+		Runs simulation
 		"""
 		tile_IDs = self.TileGen.construct(ColorGen.palette)
 		Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
@@ -87,8 +86,8 @@ class Engine(object):
 					elif event.key == K_s and speed >= 10:
 						speed -= 10
 						
+					#Pause
 					elif event.key == K_p:
-						pdb.set_trace()
 						if pre_speed == 0:
 							pre_speed = speed
 							speed = 0
@@ -96,12 +95,12 @@ class Engine(object):
 							speed = pre_speed
 							pre_speed = 0
 					
-					#Shuffles color palette
+					#Shuffles current color palette
 					elif event.key == K_r:
 						np.random.shuffle(ColorGen.palette)
 						tile_IDs = self.TileGen.reset(ColorGen.palette)
 					
-					#Generate new random palette
+					#Generates new colorset
 					elif event.key == K_g:
 						ColorGen.random_palette(ColorGen.base)
 						ColorGen.generate_colors()
@@ -131,7 +130,7 @@ class Engine(object):
 			
 	def render_tiles(self, map):
 		"""
-		Paint tiles of the current frame
+		Paint tiles for the current frame
 		
 		@param map: Dict((x,y) : ID), Dictionary which contain the position of the tiles and their respective color
 		"""

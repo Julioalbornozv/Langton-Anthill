@@ -8,13 +8,11 @@ class Colony(object):
 	
 	@param config: Configuration parameters
 	
-	@field size: Tile Size in pixels
 	@field screen: Size of the screen
 	@field default: Default Ruleset
 	@field sym: Symbols used to describe a ruleset
 	@field length: Length of each ant ruleset
-	@field dir: Dictionary containing unitary vectors for each direction
-	@field ants: List containing the Ant objects
+	@field ants: List containing each Ant object
 	"""
 	def __init__(self, config, tile):
 		
@@ -83,7 +81,7 @@ class Colony(object):
 				if k== ant.dir:
 					face = str(k)
 					break
-			f.write(str(ant.pos[0]//size)+"\t"+str(ant.pos[1]//size)+"\t"+face+"\t"+ant.ruleset+"\n")
+			f.write(str(ant.pos[0]//self.Ttype.x)+"\t"+str(ant.pos[1]//self.Ttype.y)+"\t"+face+"\t"+ant.ruleset+"\n")
 		f.close()
 		
 		

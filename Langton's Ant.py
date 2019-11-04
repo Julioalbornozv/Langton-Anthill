@@ -7,6 +7,8 @@ import Color_Gen as Cg
 import Ant as A
 import Colony as Col
 import Engine as Eng
+
+### Main procedure
 			
 # Read initial parameters
 config = cfg.ConfigParser()

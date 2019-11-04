@@ -4,7 +4,7 @@ import random
 class Color_Generator(object):
 	def __init__(self, config):
 		"""
-		Class responsible to create the tiles which will be used by the program, currently this tiles are a set of gl
+		Class responsible of creating the color palette used by the program
 		
 		@param config: Configuration parameters
 		
@@ -13,15 +13,14 @@ class Color_Generator(object):
 		@field interp: Color interpolation method
 		@field shuffle: Determines if the generated colors are shuffled after generation
 		@field save: Determines if generated data is saved after the simulation
-		@field cell_size: Tile size in Pixels
 		@field: palette, List of colors values for each tile (0-255)
 		
 		"""
 		self.size = config.getint('Ruleset', 'LENGTH')-1
+		self.base = config.getint('Color', 'BASE')
 		self.interp = config.get('Color', 'INTERPOLATION')
 		self.shuffle = config.getboolean('Color', 'SHUFFLE')
 		self.save = config.getboolean('Color', 'SAVE')
-		self.base = config.getint('Color', 'BASE')
 		self.palette = []
 		
 		scheme = config.get('Color', 'SCHEME')
@@ -107,9 +106,7 @@ class Color_Generator(object):
 	
 	def generate_colors(self):
 		"""
-		Generates tiles using OpenGL Display lists and the colors provided by the color palette , it will return a list of glList indexes, which can be used by glCallList to draw them on the screen.
-		
-		@return Index List
+		Generates a palette based on the given parameters and saves it inside the object self.palette field
 		"""
 		n = len(self.palette)
 		
