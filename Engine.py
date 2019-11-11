@@ -98,6 +98,7 @@ class Engine(object):
 					#Shuffles current color palette
 					elif event.key == K_r:
 						np.random.shuffle(ColorGen.palette)
+						ColorGen.save_palette()
 						tile_IDs = self.TileGen.reset(ColorGen.palette)
 					
 					#Generates new colorset
@@ -105,6 +106,7 @@ class Engine(object):
 						ColorGen.random_palette(ColorGen.base)
 						ColorGen.generate_colors()
 						np.random.shuffle(ColorGen.palette)
+						ColorGen.save_palette()
 						tile_IDs = self.TileGen.reset(ColorGen.palette)
 						
 			glClear(GL_COLOR_BUFFER_BIT)

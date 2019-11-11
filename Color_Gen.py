@@ -45,7 +45,7 @@ class Color_Generator(object):
 		
 		self.palette = np.asarray(temp)
 	
-	def save_palette(self,path):
+	def save_palette(self,path = "save/colors.txt"):
 		"""
 		Saves the current palette into a file
 		
@@ -117,7 +117,7 @@ class Color_Generator(object):
 			self.palette = self.palette[:self.size]
 			
 		if self.save:
-			self.save_palette("save/colors.txt")
+			self.save_palette()
 		
 		
 		

@@ -94,6 +94,7 @@ class Hexagonal_Tile(Tile):
 		d = int(3*R/2)
 		self.x = 2*d
 		self.y = 2*r
+		
 	@property
 	def directions(self):
 		R = self.size / 2
