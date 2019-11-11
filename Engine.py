@@ -12,36 +12,32 @@ class Engine(object):
 	"""
 	Class concerning simulation rendering and user interaction
 	"""
-	def __init__(self, config, Tgen):
+	def __init__(self, config, template):
 		"""
 		Creates OpenGL display and sets basic elements
 		
 		@param config:	Config object with the starting parameters
-		@param Tgen: Tile Generator object
+		@param template: A generic tile created by a Tile Generator object
 		
 		@field width: Window's width
 		@field height: Window's height
 		"""
-		self.TileGen = Tgen
-		size = self.TileGen.size
-		temp = self.TileGen.template
 		
 		### Detects if fullscreen for an axis is active
 		conf_width = config.getint('Display','WIDTH')
 		conf_height = config.getint('Display','HEIGHT')
 		
 		if conf_width == -1:
-			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//temp.x)
+			config['Display']['WIDTH'] = str(GetSystemMetrics(0)//template.x)
 			
 		if conf_height == -1:
-			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//temp.y)
+			config['Display']['HEIGHT'] = str(GetSystemMetrics(1)//template.y)
 			
-		if conf_width == -1 and conf_height == -1:
-			os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
+		os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 			
 		### Screen size
-		self.width = int(config.getint('Display','WIDTH') * temp.x)
-		self.height = int(config.getint('Display','HEIGHT') * temp.y)
+		self.width = int(config.getint('Display','WIDTH') * template.x)
+		self.height = int(config.getint('Display','HEIGHT') * template.y)
 		
 		### OpenGL screen initialization
 		pygame.init()
@@ -59,11 +55,11 @@ class Engine(object):
 		glShadeModel(GL_SMOOTH)
 		glClearDepth(1.0)
 	
-	def run(self, Anthill, ColorGen):
+	def run(self, Anthill, ColorGen, TileGen):
 		"""
 		Runs simulation
 		"""
-		tile_IDs = self.TileGen.construct(ColorGen.palette)
+		tile_IDs = TileGen.construct(ColorGen.palette)
 		Map = dict({(0,0) : 0})	#Dictionary mapping the board  (Coord tuple : Tile_ID)
 		
 		speed = 50	#Iterations per frame
@@ -78,6 +74,8 @@ class Engine(object):
 			
 				if event.type == KEYDOWN:
 					if event.key == K_ESCAPE:
+						if ColorGen.write:
+							ColorGen.save()		#Saves last palette
 						run = False
 					
 					#Speed management
@@ -98,16 +96,13 @@ class Engine(object):
 					#Shuffles current color palette
 					elif event.key == K_r:
 						np.random.shuffle(ColorGen.palette)
-						ColorGen.save_palette()
-						tile_IDs = self.TileGen.reset(ColorGen.palette)
+						tile_IDs = TileGen.reset(ColorGen.palette)
 					
 					#Generates new colorset
 					elif event.key == K_g:
 						ColorGen.random_palette(ColorGen.base)
 						ColorGen.generate_colors()
-						np.random.shuffle(ColorGen.palette)
-						ColorGen.save_palette()
-						tile_IDs = self.TileGen.reset(ColorGen.palette)
+						tile_IDs = TileGen.reset(ColorGen.palette)
 						
 			glClear(GL_COLOR_BUFFER_BIT)
 			
@@ -128,7 +123,6 @@ class Engine(object):
 					ant.pos[1] %= self.height
 				
 			pygame.display.flip()
-			#pygame.time.wait(int(1000))
 			
 	def render_tiles(self, map):
 		"""

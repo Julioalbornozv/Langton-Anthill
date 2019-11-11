@@ -7,12 +7,14 @@ class Colony(object):
 	Ant container class, handles ant generation.
 	
 	@param config: Configuration parameters
+	@param tile: Generic template used for the simulation
 	
 	@field screen: Size of the screen
 	@field default: Default Ruleset
 	@field sym: Symbols used to describe a ruleset
 	@field length: Length of each ant ruleset
 	@field ants: List containing each Ant object
+	@field save: If True, this object will save the ant's initial parameters
 	"""
 	def __init__(self, config, tile):
 		
@@ -75,7 +77,6 @@ class Colony(object):
 		"""
 		f = open(path,"w")
 		dir = self.Ttype.directions
-		size = self.Ttype.size
 		for ant in self.ants:
 			for k in dir.keys():
 				if k== ant.dir:

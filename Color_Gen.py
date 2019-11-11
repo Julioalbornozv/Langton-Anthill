@@ -20,7 +20,7 @@ class Color_Generator(object):
 		self.base = config.getint('Color', 'BASE')
 		self.interp = config.get('Color', 'INTERPOLATION')
 		self.shuffle = config.getboolean('Color', 'SHUFFLE')
-		self.save = config.getboolean('Color', 'SAVE')
+		self.write = config.getboolean('Color', 'SAVE')
 		self.palette = []
 		
 		scheme = config.get('Color', 'SCHEME')
@@ -28,11 +28,11 @@ class Color_Generator(object):
 		if scheme == "RANDOM":
 			self.random_palette(self.base)
 		elif scheme == "LOAD":
-			self.load_palette()
+			self.load()
 			
 		self.generate_colors()
 		
-	def load_palette(self, path = "colors.txt"):
+	def load(self, path = "colors.txt"):
 		"""
 		Loads a palette from a txt file
 		
@@ -45,7 +45,7 @@ class Color_Generator(object):
 		
 		self.palette = np.asarray(temp)
 	
-	def save_palette(self,path = "save/colors.txt"):
+	def save(self,path = "save/colors.txt"):
 		"""
 		Saves the current palette into a file
 		
@@ -106,7 +106,7 @@ class Color_Generator(object):
 	
 	def generate_colors(self):
 		"""
-		Generates a palette based on the given parameters and saves it inside the object self.palette field
+		Generates a color palette based on the given parameters and saves it inside the object self.palette field
 		"""
 		n = len(self.palette)
 		
@@ -115,9 +115,6 @@ class Color_Generator(object):
 			
 		elif n > self.size:
 			self.palette = self.palette[:self.size]
-			
-		if self.save:
-			self.save_palette()
 		
 		
 		

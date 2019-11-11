@@ -18,7 +18,7 @@ config.read('config.ini')
 TGen = Tg.Tile_Generator(config)
 
 # Initialize engine
-render = Eng.Engine(config, TGen)
+render = Eng.Engine(config, TGen.template)
 
 # Creates Ants
 Anthill = Col.Colony(config, TGen.template)
@@ -28,4 +28,4 @@ Anthill.load_ants("ants.txt")
 CGen = Cg.Color_Generator(config)
 
 ### Program Starts
-render.run(Anthill, CGen)
+render.run(Anthill, CGen, TGen)

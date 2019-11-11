@@ -2,22 +2,20 @@ from abc import ABC, abstractmethod
 import numpy as np
 from OpenGL.GL import *
 from OpenGL.GLU import *
-	
-import pdb
 
 class Tile(ABC):
-	def __init__(self, size):
+	def __init__(self, scale):
 		"""
 		Class which contains the information required to construct a Tile of a specific shape. 
 		
-		@param size: Scale used by the program
+		@param scale: Scale used by the program
 		@param x: Tile Width
 		@param y: Tile Height
 		
 		@field directions: Ant movement vectors asociated with the ant current orientation
 		@field offset: Result of rotating the ant after reading a specific rule
 		"""
-		self.size = size
+		self.scale = scale
 	
 	@property
 	@abstractmethod
@@ -53,21 +51,24 @@ class Tile(ABC):
 class Square_Tile(Tile):
 	def __init__(self, config):
 		super().__init__(config)
-		self.x = self.size
-		self.y = self.size
+		self.x = self.scale
+		self.y = self.scale
 	
 	@property
 	def directions(self):
-		R = self.size
+		R = self.scale
 		return dict({0: (0,R), 1: (R,0), 2: (0,-R), 3: (-R,0)})
 		
 	@property
 	def offset(self):
+		"""
+		Rotations: R = 90°, L = -90°, U = 0°, D = 180°
+		"""
 		return dict({"R": 1, "L": -1, "U": 0, "D": 2})
 		
 	def compile(self, color):
 		tile_ID = glGenLists(1)
-		k = self.size/2
+		k = self.scale/2
 		n_color = color / 255.0		#Normalizes color
 		
 		glNewList(tile_ID,GL_COMPILE)
@@ -89,7 +90,7 @@ class Square_Tile(Tile):
 class Hexagonal_Tile(Tile):
 	def __init__(self, config):
 		super().__init__(config)
-		R = self.size / 2
+		R = self.scale / 2
 		r = int(R * np.cos(np.pi/6))
 		d = int(3*R/2)
 		self.x = 2*d
@@ -97,19 +98,22 @@ class Hexagonal_Tile(Tile):
 		
 	@property
 	def directions(self):
-		R = self.size / 2
-		r = int(R * np.cos(np.pi/6))
-		d = int(3*R/2)
+		R = self.scale / 2				#Maximal Radius	
+		r = int(R * np.cos(np.pi/6))	#Minimal Radius
+		d = int(3*R/2)					#Distance between centers for diagonal movements
 		
 		return dict({0: (0,2*r), 1: (d,r), 2: (d,-r), 3: (0,-2*r), 4: (-d,-r), 5: (-d,r)})
 		
 	@property
 	def offset(self):
+		"""
+		Rotations: R = 60°, S = 120°. L = -60°, M = -120°, U = 0°, D = 180°
+		"""
 		return dict({"R": 1, "S": 2, "L": -1, "M": -2, "T": 0, "B": 3})
 		
 	def compile(self, color):
 		tile_ID = glGenLists(1)
-		R = self.size / 2
+		R = self.scale / 2
 		
 		n_color = color / 255.0		#Normalizes color
 		

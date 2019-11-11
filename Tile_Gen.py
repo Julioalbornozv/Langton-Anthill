@@ -10,12 +10,13 @@ class Tile_Generator(object):
 		
 		@param config: Config object containing starting parameters
 		
-		@field size: Tile size
+		@field scale: Tile scale factor
 		@field shape: Requested tile shape
 		@field types: Dictionary containing the currently available Tile object types and their associated names
+		@field template: Generic tile which is given to other objects as a template
 		"""
 	
-		self.size = config.getint('Tile', 'SIZE')
+		self.scale = config.getint('Tile', 'SCALE')
 		self.shape = config['Tile']['SHAPE']
 		
 		self.types = dict({"SQUARE": Tile.Square_Tile, "HEXAGON": Tile.Hexagonal_Tile})
@@ -27,20 +28,22 @@ class Tile_Generator(object):
 		Initializes a Tile object, if the shape requested is not known it will raise an error.
 		"""
 		try:
-			new = self.types.get(self.shape)(self.size)
+			new = self.types.get(self.shape)(self.scale)
 			return new
 		except Exception:
 			raise
 		
-	def reset(self, new_colors):
+	def reset(self, colors):
 		"""
 		Deletes previous Tile instances, creates a new set based on the colors given
 		
+		@param colors: New colorset
+		
 		@return: New Tileset OpenGL ID's
 		"""
-		glDeleteLists(1, len(new_colors))
+		glDeleteLists(1, len(colors))
 		
-		return self.construct(new_colors)
+		return self.construct(colors)
 	
 	def construct(self, colorset):
 		"""
@@ -53,4 +56,4 @@ class Tile_Generator(object):
 			id = self.template.compile(color)
 			tile_id.append(id)
 		
-		return tile_id		#TODO: See if this is used during execution
+		return tile_id	

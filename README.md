@@ -21,7 +21,7 @@ Examples of usage can be found in the example folder, where for each example it 
 Initialization settings of the program, separated in three sections:
 ### Display Section
 * `WIDTH` & `HEIGHT`: Size of the grid which will be displayed, where each contains the number of tiles for the x and y axis. Placing `-1` on this fields will match the display with the screen size (Fullscreen if both).
-* `CELL_SIZE`: Size of each tile in pixels
+* `SCALE`: Size of each tile in pixels
 
 ### Color Section
 * `SCHEME`: Two possible settings, `LOAD` will read the colors found in "colors.txt" while `RANDOM`generates a new colorset with random colors.
