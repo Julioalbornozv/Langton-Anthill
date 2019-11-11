@@ -13,6 +13,6 @@ To reproduce this results, move the configuration files to the folder where the 
 
 ![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/examples/Ex3/Example_3.png)
 
-* 2 ants usin moving through an hexagonal tiling
+* 2 ants moving through an hexagonal tiling
 
 ![""](https://raw.githubusercontent.com/Julioalbornozv/Langton-Anthill/master/examples/Ex4/Example_4.png)
