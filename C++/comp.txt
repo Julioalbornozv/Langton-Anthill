@@ -1,0 +1,2 @@
+Move this to a Makefile
+gcc glfw_test.cpp -g -Wall -I .\Dependencies\include\ -L .\Dependencies\lib -lglfw3 -lopengl32 -lgdi32
