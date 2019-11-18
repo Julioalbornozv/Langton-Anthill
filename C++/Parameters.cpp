@@ -3,7 +3,8 @@
 #include <windows.h>
 
 Config::Config(){
-	/* [WINDOWS] Parses configuration file "config.ini" and saves data in 
+	/*** 
+	 * [WINDOWS] Parses configuration file "config.ini" and saves data in 
 	 * a Config object.
 	 
 	 * TODO: Cleanup code

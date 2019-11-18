@@ -1,3 +1,3 @@
 Move this to a Makefile
 gcc glfw_test.cpp -g -Wall -I .\Dependencies\include\ -L .\Dependencies\lib -lglfw3 -lopengl32 -lgdi32
-g++ lanthill.cpp Parameters.cpp -g -Wall -Wextra -Werror
+ g++ lanthill.cpp Parameters.cpp Tile_Generator.cpp Tile.cpp -g -Wall -I .\Dependencies\include\ -L .\Dependencies\lib -lglfw3 -lopengl32 -lgdi32
