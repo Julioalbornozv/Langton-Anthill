@@ -1,4 +1,12 @@
 #include "Parameters.h"
+/***
+ * @file Parameters.cpp
+ * Ini File parsing implementation
+ */
+// Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
+// The License.txt file describes the conditions under which this
+// software may be distributed.
+
 #include <string>
 #include <windows.h>
 

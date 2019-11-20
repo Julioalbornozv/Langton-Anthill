@@ -13,7 +13,6 @@ Tile_Generator::Tile_Generator(Config* config){
 	this->scale = config->scale;
 	this->shape = config->shape;
 	
-	
 	this->generic = this->form();
 	}
 	

@@ -1,5 +1,5 @@
 /***
- * @file Generators.h
+ * @file Tile.cpp
  * Tile implementations
  */
 // Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>

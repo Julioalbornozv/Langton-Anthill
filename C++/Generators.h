@@ -14,9 +14,11 @@
 
 #include "Tile.h"
 #include "Parameters.h"
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <string>
+#include <sstream>
+#include <vector>
 
 class Color_Generator{
 	/***
@@ -34,23 +36,23 @@ class Color_Generator{
 public:
 	Color_Generator(Config* config);
 	~Color_Generator();
-	
-	void load();
-	void save();
+	void load(std::string path = "colors.txt");
+	void save(std::string path = "save/colors.txt");
 	void random_palette(unsigned int n);
 	void generate_colors();
+	unsigned int size;
 	
-	glm::vec3* palette;
+	std::vector<glm::vec3>* palette;
 	
 private:
-	unsigned int size;
 	unsigned int base;
 	std::string interp;
 	bool shuffle;
 	bool write;
 	std::string scheme;
 	
-	glm::vec3* fill_palette();
+	std::vector<glm::vec3>* fill_palette();
+	void linspace(glm::vec3 A, glm::vec3 B, int num, std::vector<glm::vec3>* caret);
 	};
 	
 class Tile;

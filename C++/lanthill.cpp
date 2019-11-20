@@ -1,3 +1,11 @@
+/***
+ * @file lanthill.cpp
+ * Program entry point
+ */
+// Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
+// The License.txt file describes the conditions under which this
+// software may be distributed.
+
 #include "Parameters.h"
 #include "Generators.h"
 //#include <Ant.h>
@@ -14,7 +22,7 @@ int main(){
 	Tile_Generator TGen = Tile_Generator(&Param);
 	
 	//// Initialize engine class
-	//Engine render = Engine(config, TGen.generic);
+	Engine render = Engine(&param, TGen.generic);
 	//
 	//// Create ants
 	//Colony Anthill = Colony(config, TGen.generic);

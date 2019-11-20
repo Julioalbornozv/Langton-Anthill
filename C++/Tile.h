@@ -6,7 +6,7 @@
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <GLFW/glfw3.h>
@@ -29,8 +29,8 @@ class Tile{
 	 */
 public:
 	int scale, X, Y;
-	std::map<int, glm::vec2> directions;
-	std::map<char, int> offset;
+	std::unordered_map<int, glm::vec2> directions;
+	std::unordered_map<char, int> offset;
 	
 	virtual int compile(glm::vec3 *color) = 0;
 	};
