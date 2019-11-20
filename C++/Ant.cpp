@@ -5,8 +5,9 @@
 // Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include "Ant.h"
 
-Ant::Ant(int x, int y, int dir, std::string rules, Tile* tile){
+Ant::Ant(int x, int y, int orientation, std::string rules, Tile* temp){
 	/***
 	* Ant Class, it has a position and an orientation, the ant will move depending 
 	* on the instruction that the current tile color represents
@@ -16,18 +17,18 @@ Ant::Ant(int x, int y, int dir, std::string rules, Tile* tile){
 	* @param rules: Set of instructions that this particular ant follows
 	* @param tile: Type of tile used on the current session
 	*/
-	this->tile = tile;
-	this->dir = dir;
-	this->pos = glm::vec2(x, y);
-	this->ruleset = rules;
+	tile = temp;
+	dir = orientation;
+	pos = glm::vec2(x, y);
+	ruleset = rules;
 	}
 	
-Ant::Ant(int index){
+void Ant::command(int index){
 	/*** 
 	* Rotates ant and moves forward
 	* 
 	* @param index: Index of the current instruction being porcessed
 	*/ 
-	this->dir = (this->dir + this->tile->offset[this->ruleset[index]]) % this->tile->offset.size();
-	this->pos += this->directions[this->dir];
+	dir = (dir + tile->offset[ruleset[index]]) % tile->offset.size();
+	pos += tile->directions[dir];
 	}

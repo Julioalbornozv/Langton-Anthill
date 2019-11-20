@@ -19,4 +19,4 @@ public:
 	
 	Ant(int x, int y, int dir, std::string rules, Tile* tile);
 	void command(int index);
-	}
+	};

@@ -26,26 +26,26 @@ Color_Generator::Color_Generator(Config* config){
 	* @field palette: List of colors values for each tile (0-255)
 	*/
 	
-	this->size = config->length;
-	this->base = config->base;
-	this->interp = config->interp;
-	this->shuffle = config->shuffle;
-	this->write = config->Csave;
-		
-	this->scheme = config->scheme;
+	size = config->length;
+	base = config->base;
+	interp = config->interp;
+	shuffle = config->shuffle;
+	write = config->Csave;
 	
-	if (this->scheme == "RANDOM"){		//Crashes
-		this->random_palette(this->base);
+	scheme = config->scheme;
+	
+	if (scheme == "RANDOM"){
+		random_palette(base);
 		}
-	else if (this->scheme == "LOAD"){
-		this->load();
+	else if (scheme == "LOAD"){
+		load();
 		}
 	
-	this->generate_colors();
+	generate_colors();
 	}
 
 Color_Generator::~Color_Generator(){
-	delete this->palette;
+	delete palette;
 	}
 	
 void Color_Generator::load(std::string path){
@@ -71,7 +71,7 @@ void Color_Generator::load(std::string path){
 		colors->push_back(col);
 		}
 		
-	this->palette = colors;
+	palette = colors;
 	file.close();
 	}
 	
@@ -82,8 +82,8 @@ void Color_Generator::save(std::string path){
 	* @param path: Path of the backup file
 	*/
 	std::ofstream file(path);
-	std::vector<glm::vec3> colors = *this->palette;
-	for (unsigned int i = 0; i < this->size; i++){
+	std::vector<glm::vec3> colors = *palette;
+	for (unsigned int i = 0; i < size; i++){
 		glm::vec3 color = colors[i];
 		file << color[0] << '\t' << color[1] << '\t' << color[2] << '\n';
 		}
@@ -103,7 +103,7 @@ void Color_Generator::random_palette(unsigned int n){
 	for (unsigned int i = 0; i < n; i++){
 		colors->push_back(glm::vec3(rand() % 256, rand() % 256, rand() % 256));
 		}
-	this->palette = colors;
+	palette = colors;
 	}
 	
 std::vector<glm::vec3>* Color_Generator::fill_palette(){
@@ -112,12 +112,12 @@ std::vector<glm::vec3>* Color_Generator::fill_palette(){
 	* 
 	* @return Numpy array with the new colorset
 	*/
-	unsigned int n = this->palette->size();
+	unsigned int n = palette->size();
 	
 	std::vector<glm::vec3>* colors = new std::vector<glm::vec3>; 
 	
-	if (this->interp == "RGB"){
-		int req = this->size - n - 1;
+	if (interp == "RGB"){
+		int req = size - n - 1;
 		int gaps[n-1];
 		std::fill(&gaps[0], &gaps[n-1], (req/(n-1)));
 		
@@ -125,22 +125,22 @@ std::vector<glm::vec3>* Color_Generator::fill_palette(){
 			gaps[i]++;
 			}
 		
-		std::vector<glm::vec3> pal = *this->palette;
+		std::vector<glm::vec3> pal = *palette;
 		for (unsigned int j = 0; j < n-1; j++){
-			this->linspace(pal[j], pal[j+1], gaps[j], colors);
+			linspace(pal[j], pal[j+1], gaps[j], colors);
 			}
 		
 		colors->push_back(pal[n-1]);
 		}
 	
 	else{
-		std::vector<glm::vec3> pal = *this->palette;
-		for (unsigned int i = 0; i < this->size; i++){
+		std::vector<glm::vec3> pal = *palette;
+		for (unsigned int i = 0; i < size; i++){
 			colors->push_back(pal[i%n]);
 			}
 		}
 		
-	if (this->shuffle){
+	if (shuffle){
 		std::random_shuffle(colors->begin(), colors->end());
 		}
 
@@ -152,7 +152,7 @@ void Color_Generator::linspace(glm::vec3 A, glm::vec3 B, int num, std::vector<gl
 	* Generates num-1 colors between A and B adds, adds A + said colors into a vector
 	*
 	*/
-	glm::vec3 steps = (B - A)/(float)(num + 1); //TODO: Verify int division
+	glm::vec3 steps = (B - A)/(float)(num + 1);
 	
 	for (int i = 0; i < num+1; i++){
 		vector->push_back(A + steps * (float)i);
@@ -164,9 +164,9 @@ void Color_Generator::generate_colors(){
 	* Generates a color palette based on the given parameters and saves it 
 	* inside the object self.palette field
 	*/
-	unsigned int n = this->palette->size();
+	unsigned int n = palette->size();
 	
-	if (n < (this->size)-1){
-		this->palette = this->fill_palette();
+	if (n < (size)-1){
+		palette = fill_palette();
 		}
 	}
