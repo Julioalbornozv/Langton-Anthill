@@ -91,7 +91,7 @@ void Colony::load_ants(std::string path){
 			}
 		
 		// Initializes Ant
-		Ant bug = Ant(X, Y, dir, buffer, Ttype);
+		Ant bug = Ant(X * Ttype->X, Y * Ttype->Y, dir, buffer, Ttype);
 		insects->push_back(bug);
 		}
 		

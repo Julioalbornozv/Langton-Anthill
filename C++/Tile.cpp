@@ -8,7 +8,7 @@
 #include "Tile.h"
 #include <math.h>
 
-#define PI 3.14159265
+#define PI 3.141592653589793
 
 Square_Tile::Square_Tile(int scale){
 	int R = scale;
@@ -29,7 +29,7 @@ Square_Tile::Square_Tile(int scale){
 	
 int Square_Tile::compile(glm::vec3* color){
 	int TileID = glGenLists(1);
-	int k = this->scale / 2.0f;
+	float k = (float)this->scale / 2.0f;
 	glm::vec3 n_col = *color / 255.0f;		//Color Normalization
 	
 	float* p_col = glm::value_ptr(n_col);	//Cast to float array
@@ -53,9 +53,9 @@ int Square_Tile::compile(glm::vec3* color){
 	
 Hexagon_Tile::Hexagon_Tile(int scale){
 	this->scale = scale;
-	int R = this->scale / 2;
-	int r = (int)(R * cos(PI / 6));
-	int d = (int)(3*R/2);
+	float R = (float)this->scale / 2.0f;
+	int r = (int)(R * cos(PI / 6.0f));
+	int d = (int)(3.0f*R/2.0f);
 	this->X = 2*d;
 	this->Y = 2*r;
 	
@@ -76,7 +76,7 @@ Hexagon_Tile::Hexagon_Tile(int scale){
 
 int Hexagon_Tile::compile(glm::vec3 *color){
 	int TileID = glGenLists(1);
-	int R = (int)(this->scale / 2.0f);
+	float R = (float)(this->scale / 2.0f);
 	
 	glm::vec3 n_col = *color / 255.0f;
 	
@@ -88,7 +88,7 @@ int Hexagon_Tile::compile(glm::vec3 *color){
 	glBegin(GL_POLYGON);
 	glColor3fv(p_col);
 	for (int i = 0; i < 6; i++){
-		glVertex2f(R * cos(i*PI/3.0), R * sin(i*PI/3.0));
+		glVertex2f(R * cos(i*PI/3.0f), R * sin(i*PI/3.0f));
 		}	
 	glEnd();
 	

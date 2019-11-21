@@ -123,11 +123,12 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 				else{
 					color = Map[coord];
 					}
-				Map[coord] = (color+1) % ((sizeof(TileIDs)/sizeof(*TileIDs))+1);
+				
+				Map[coord] = (color+1) % (ColorGen->size);
 				ant.command(color);
 				
-				ant.pos[0] %= this->width;
-				ant.pos[1] %= this->height;
+				ant.pos[0] = ((ant.pos[0] % this->width) + this->width) % this->width;
+				ant.pos[1] = ((ant.pos[1] % this->height) + this->height) % this->height;
 				}
 			}
         glfwSwapBuffers(window);

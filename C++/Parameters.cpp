@@ -48,7 +48,7 @@ Config::Config(){
 	
 	int buff_size;
 	if (this->length > 7){
-		buff_size = this->length;
+		buff_size = this->length+1;
 		}
 	else{
 		buff_size = 7; //RANDOM option
