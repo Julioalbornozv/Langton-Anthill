@@ -17,12 +17,13 @@
 class Colony{
 public:
 	Colony(Config* config, Tile* tile);
+	~Colony();
 	
-	void load_ants(std::string path);
-	void save_ants(std::string path);
+	void load_ants(std::string path = "ants.txt");
+	void save_ants(std::string path = "save/ants.txt");
 	std::string random_ruleset();
 	
-	std::vectpr<Ant> ants;
+	std::vector<Ant>* ants;
 	
 private:
 	unsigned int screen[2];

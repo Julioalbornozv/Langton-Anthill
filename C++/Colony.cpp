@@ -7,20 +7,27 @@
 
 #include "Colony.h"
 #include <sstream>
+
 Colony::Colony(Config* config, Tile* tile){
-	this->screen[0] = config->width;
-	this->screen[1] = config->height;
+	screen[0] = config->DWidth;
+	screen[1] = config->DHeight;
 	
-	this->def_rule = config->def_rule;
-	this->sym = config->symbols;
-	this->length = config->length;
-	this->save = config->RSave;
+	def_rule = config->def_rule;
+	sym = config->symbols;
+	length = config->length;
+	save = config->Rsave;
 	
-	this->Ttype = tile;
+	Ttype = tile;
 	
-	if (this->def_rule.compare("RANDOM") == 0){
-		this->def_rule = this->random_ruleset();
+	if (def_rule.compare("RANDOM") == 0){
+		def_rule = random_ruleset();
 		}
+		
+	load_ants();
+	}
+	
+Colony::~Colony(){
+	delete ants;
 	}
 	
 void Colony::load_ants(std::string path){
@@ -32,7 +39,8 @@ void Colony::load_ants(std::string path){
 	std::ifstream file(path);	//File content
 	std::string line;
 	
-	while std::getline(file, line){	//Read entire line
+	std::vector<Ant>* insects = new std::vector<Ant>; 
+	while (std::getline(file, line)){	//Read entire line
 		std::stringstream linestream(line);
 		
 		std::string buffer;
@@ -40,73 +48,78 @@ void Colony::load_ants(std::string path){
 		
 		//X position
 		std::getline(linestream, buffer, '\t');		//Refactor this block
-		if (buffer.compare('R') == 0){
-			X = rand() % (this->screen[0] - 1) + 1
+		if (buffer.compare("R") == 0){
+			X = rand() % (screen[0] - 1) + 1;
 			}
 		else{
-			X = std::stoi(X);
+			X = std::stoi(buffer);
 			}
 			
 		buffer.clear();
 		
 		//Y position
 		std::getline(linestream, buffer, '\t');		//Refactor this block
-		if (buffer.compare('R') == 0){
-			Y = rand() % (this->screen[1] - 1) + 1
+		if (buffer.compare("R") == 0){
+			Y = rand() % (screen[1] - 1) + 1;
 			}
 		else{
-			Y = std::stoi(Y);
+			Y = std::stoi(buffer);
 			}
 			
 		buffer.clear();
 		
 		//Ant orientation
 		std::getline(linestream, buffer, '\t');		//Refactor this block
-		if (buffer.compare('R') == 0){
-			int max = this->Ttype->directions.size();
-			dir = rand() % max
+		if (buffer.compare("R") == 0){
+			int max = Ttype->directions.size();
+			dir = rand() % max;
 			}
 		else{
-			dir = std::stoi(X);
+			dir = std::stoi(buffer);
 			}
 		
 		buffer.clear();
 		
 		//Ant ruleset
 		if (linestream.eof()){			//Uses default ruleset
-			buffer = this->def_rule;
+			buffer = def_rule;
 			}
 		
 		std::getline(linestream, buffer);	//4th column
-		if (buffer.compare('RANDOM'){
-			buffer = std::random_ruleset();
+		if (buffer.compare("RANDOM") == 0){
+			buffer = random_ruleset();
 			}
 		
 		// Initializes Ant
-		ants.push_back(new Ant(X, Y, dir, buffer, this->Ttype);
+		Ant bug = Ant(X, Y, dir, buffer, Ttype);
+		insects->push_back(bug);
 		}
+		
+	ants = insects;
 	file.close();
 	
-	if (this->save){
-		this->save_ants("save/ants.txt");
+	if (save){
+		save_ants("save/ants.txt");
 		}
 	}
 
-void save_ants(std::string path){
+void Colony::save_ants(std::string path){
 	/***
 	* Saves data of generated ants in a backup txt file
 	* 	
 	* @param path: Location of the backu
 	*/
 	std::ofstream file(path);	//File content
+	std::vector<Ant> bugs = *ants;
 	
-	for (auto &this->ants : ant){
-		file << ant->pos[0]/this->Ttype->X << "\t" << ant->pos[1]/this->Ttype->Y << "\t" << ant->dir << "\t" << ant->ruleset << "\n";	
+	for (unsigned int i = 0; i < bugs.size(); i++){
+		Ant ant = bugs[i];
+		file << ant.pos[0]/Ttype->X << "\t" << ant.pos[1]/Ttype->Y << "\t" << ant.dir << "\t" << ant.ruleset << "\n";	
 		}
 	file.close();
 	}
 
-std::string random_ruleset(){
+std::string Colony::random_ruleset(){
 	/***
 	* Generates a random set of instructions from the given specifications
 	* 
@@ -115,9 +128,9 @@ std::string random_ruleset(){
 	*/
 	
 	std::string Rrule;
-	for (int i = 0; i < this->length; i++){
-		int ch = rand() % this->sym.size();		//FIX: This can cause an error if the symbols given are unordered!!!
-		Rrule += this[sym];
+	for (unsigned int i = 0; i < length; i++){
+		int ch = rand() % sym.size();
+		Rrule += sym[ch];
 		}
 	return Rrule;
 	}

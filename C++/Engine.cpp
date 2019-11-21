@@ -61,7 +61,7 @@ Engine::Engine(Config* config, Tile* tile){
 	
 void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* TileGen){
 	// Runs simulation
-	int* TileIDs = TileGem.construct(ColorGen.palette);
+	int* TileIDs = TileGen.construct(ColorGen.palette);
 	
 	std::map<int[2],int>Map;
 	Map[{0,0}] = 0;
