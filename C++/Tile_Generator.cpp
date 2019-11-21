@@ -32,7 +32,7 @@ Tile* Tile_Generator::form(){
 		}
 	}
 	
-unsigned int* Tile_Generator::reset(glm::vec3** colors, int size){
+int* Tile_Generator::reset(std::vector<glm::vec3>* colors){
 	/***
 	 * Deletes previous Tile instances, creates a new set based on 
 	 * the colors given.
@@ -41,21 +41,22 @@ unsigned int* Tile_Generator::reset(glm::vec3** colors, int size){
 	 * 
 	 * @return New Tileset OpenGL ID list
 	 */
-	 glDeleteLists(1, size);
+	 glDeleteLists(1, colors->size());
 	 
-	 return this->construct(colors, size);
+	 return construct(colors);
 	}
 	
-unsigned int* Tile_Generator::construct(glm::vec3** colors, int size){
+int* Tile_Generator::construct(std::vector<glm::vec3>* colors){
 	/***
 	 * For each color given, the generator will instance a Tile by 
 	 * calling the OpenGL commands used on its construction + its color
 	 * 
 	 * @return Tileset OpenGL ID list
 	 */
-	unsigned int* TileID = (unsigned int*)malloc(size*sizeof(unsigned int));
-	for (int i = 0; i < size; i++){
-		unsigned int id = this->generic->compile(colors[i]);
+	unsigned int size = colors->size();
+	int* TileID = new int[size];
+	for (unsigned int i = 0; i < size; i++){
+		int id = generic->compile(&(*colors)[i]);
 		TileID[i] = id;
 		}
 		

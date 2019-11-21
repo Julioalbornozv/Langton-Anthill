@@ -7,13 +7,15 @@
 // software may be distributed.
 
 #pragma once
-#include <GLFW/glfw.3>
+#include <GLFW/glfw3.h>
 #include "Parameters.h"
 #include "Colony.h"
-#include "Color_Generator.h"
-#include "Tile_Generator.h"
+#include "Generators.h"
 #include "Tile.h"
 #include <unordered_map>
+#include <map>
+#include <utility> //Pairs
+#include <winuser.h>
 
 class Engine{
 	/***
@@ -22,8 +24,9 @@ class Engine{
 public:
 	Engine(Config* config, Tile* tile);
 	void run(Colony* Anthill, Color_Generator* CGen, Tile_Generator* TGen);
-	void render_tiles(std::unordered_map<int[2], int>* map);
+	void render_tiles(std::map<std::pair<int, int>, int>* map);
 	
 private:
 	int width, height;
+	GLFWwindow* window;
 	};

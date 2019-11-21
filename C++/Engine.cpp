@@ -5,7 +5,8 @@
 // Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include Engine.h
+#include "Engine.h"
+#include <GL/glu.h>
 
 Engine::Engine(Config* config, Tile* tile){
 	/***
@@ -18,31 +19,30 @@ Engine::Engine(Config* config, Tile* tile){
 	* @field height: Window's height
 	* """
 	*/
-	int conf_width = config->width;
-	int conf_height = config->height;
+	int conf_width = config->DWidth;
+	int conf_height = config->DHeight;
 	
-	if conf_width == 0{
-		config->width = GetSystemMetrics(0)/tile->X;
+	if (conf_width == 0){
+		config->DWidth = GetSystemMetrics(0)/tile->X;
 		}
 		
-	if conf_height == 0{
-		config->height = GetSystemMetrics(1)/tile->Y;
+	if (conf_height == 0){
+		config->DHeight = GetSystemMetrics(1)/tile->Y;
 		}
 	
-	this->width = config->width;
-	this->height = config->height;
+	this->width = config->DWidth * tile->X;
+	this->height = config->DHeight * tile->Y;
 	
 	// Window Initialization
-	GLFWwindow* window;
 	
-	if(!gldwInit()){
-		return -1;
+	if(!glfwInit()){
+		return;
 		}
 		
 	window = glfwCreateWindow(this->width, this->height, "Lanthill", NULL, NULL);
 	if (!window){
         glfwTerminate();
-        return -1;
+        return;
 		}
 	glfwMakeContextCurrent(window);
 	
@@ -61,10 +61,11 @@ Engine::Engine(Config* config, Tile* tile){
 	
 void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* TileGen){
 	// Runs simulation
-	int* TileIDs = TileGen.construct(ColorGen.palette);
+	int* TileIDs = TileGen->construct(ColorGen->palette);
 	
-	std::map<int[2],int>Map;
-	Map[{0,0}] = 0;
+	std::map<std::pair<int,int>,int> Map;
+	Map[std::make_pair(0,0)] = 0;
+	
 	
 	int speed = 50;
 	int pre_speed = 0;
@@ -73,7 +74,7 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 		
 		//Move all user input to its own function, Refactor
 		if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-			glfwSetWindowShouldCLose(window, true);
+			glfwSetWindowShouldClose(window, true);
 			}
 	
 		//Speed Management
@@ -110,38 +111,38 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 		*/
         glClear(GL_COLOR_BUFFER_BIT);
 		
-		this->render(&Map);
+		this->render_tiles(&Map);
 		
 		for (int iter = 0; iter < speed ; iter++){
-			for (Ant &Anthill->ants : ant){
+			for (auto &ant : *Anthill->ants){
 				int color;
-				if (Map.count(ant.pos) == 0){
-					color = 0
+				std::pair<int, int> coord = std::make_pair(ant.pos[0], ant.pos[1]);
+				if (Map.count(coord) == 0){
+					color = 0;
 					}
 				else{
-					color = Map[ant.pos];
+					color = Map[coord];
 					}
-				Map[ant.pos] = (color+1) % (TileIDs.size()+1);
-				ant->command(color);
+				Map[coord] = (color+1) % ((sizeof(TileIDs)/sizeof(*TileIDs))+1);
+				ant.command(color);
 				
-				ant->pos[0] %= this->width;
-				ant->pos[1] %= this->height;
+				ant.pos[0] %= this->width;
+				ant.pos[1] %= this->height;
 				}
 			}
         glfwSwapBuffers(window);
         glfwPollEvents();
 		}
 		
-	if (ColorGen->save){	//Move this to ColorGen destructor
+	if (ColorGen->write){	//Move this to ColorGen destructor
 		ColorGen->save();
 		}
 	
 	glfwTerminate();
-    return 0;
 	}
 	
 
-void Engine::render_tiles(std::map<int[2], int>* map){
+void Engine::render_tiles(std::map<std::pair<int,int>, int>* map){
 	/***
 	* Paint tiles for the current frame
 	*
@@ -149,10 +150,10 @@ void Engine::render_tiles(std::map<int[2], int>* map){
 	* the tiles and their respective color
 	*/
 	
-	for (auto it = map.begin(); it != map.end()){
+	for (auto it = map->begin(); it != map->end(); it++){
 		if (it->second != 0){
 			glPushMatrix();
-			glTranslate(it->first[0], it->second[0],0);
+			glTranslatef(std::get<0>(it->first), std::get<1>(it->first),0);
 			glCallList(it->second);
 			glPopMatrix();
 			}

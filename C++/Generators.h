@@ -43,12 +43,12 @@ public:
 	unsigned int size;
 	
 	std::vector<glm::vec3>* palette;
+	bool write;
 	
 private:
 	unsigned int base;
 	std::string interp;
 	bool shuffle;
-	bool write;
 	std::string scheme;
 	
 	std::vector<glm::vec3>* fill_palette();
@@ -76,8 +76,8 @@ public:
 	Tile* generic;
 	
 	Tile* form();
-	unsigned int* reset(glm::vec3** colors, int size);
-	unsigned int* construct(glm::vec3** colors, int size);
+	int* reset(std::vector<glm::vec3>* colors);
+	int* construct(std::vector<glm::vec3>* colors);
 	
 private:
 	unsigned int scale;

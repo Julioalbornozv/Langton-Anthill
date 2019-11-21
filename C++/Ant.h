@@ -14,7 +14,7 @@ class Ant{
 public:
 	Tile* tile;
 	int dir;
-	glm::vec2 pos;
+	glm::ivec2 pos;
 	std::string ruleset;
 	
 	Ant(int x, int y, int dir, std::string rules, Tile* tile);

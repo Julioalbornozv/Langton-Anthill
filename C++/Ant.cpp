@@ -19,7 +19,7 @@ Ant::Ant(int x, int y, int orientation, std::string rules, Tile* temp){
 	*/
 	tile = temp;
 	dir = orientation;
-	pos = glm::vec2(x, y);
+	pos = glm::ivec2(x, y);
 	ruleset = rules;
 	}
 	
