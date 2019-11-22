@@ -7,6 +7,7 @@
 
 #include "Engine.h"
 #include <GL/glu.h>
+#include <algorithm>
 
 Engine::Engine(Config* config, Tile* tile){
 	/***
@@ -97,18 +98,19 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 			}
 		
 		//Shuffles current color palette
-		/* [This blocks wont work until you find a way to shuffle the color palette (no np.shuffle)
 		else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
-			np.random.shuffle(ColorGen.palette)
-			tile_IDs = TileGen.reset(ColorGen.palette)
+			std::random_shuffle(ColorGen->palette->begin(), ColorGen->palette->end());
+			TileIDs = TileGen->reset(ColorGen->palette);
 			}
-		#Generates new colorset
-		elif event.key == K_g:
-			delete Colorgen->palette
-			ColorGen.random_palette(ColorGen.base)
-			ColorGen.generate_colors()
-			tile_IDs = TileGen.reset(ColorGen.palette)
-		*/
+		
+		//Generates new colorset
+		else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS){
+			delete ColorGen->palette;
+			ColorGen->random_palette(ColorGen->base);
+			ColorGen->generate_colors();
+			TileIDs = TileGen->reset(ColorGen->palette);
+			}
+
         glClear(GL_COLOR_BUFFER_BIT);
 		
 		this->render_tiles(&Map);

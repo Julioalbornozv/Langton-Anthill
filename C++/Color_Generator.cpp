@@ -98,7 +98,6 @@ void Color_Generator::random_palette(unsigned int n){
 	* @param n: Number of colors to generate
 	*/
 	std::vector<glm::vec3>* colors = new std::vector<glm::vec3>;
-	srand (time(NULL));
 	
 	for (unsigned int i = 0; i < n; i++){
 		colors->push_back(glm::vec3(rand() % 256, rand() % 256, rand() % 256));

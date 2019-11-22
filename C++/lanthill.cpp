@@ -11,8 +11,11 @@
 #include "Ant.h"
 #include "Colony.h"
 #include "Engine.h"
+#include <time.h>
 
 int main(){
+	srand (time(NULL));
+	
 	//Read initial parameters
 	Config Param = Config();
 	
