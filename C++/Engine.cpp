@@ -39,7 +39,7 @@ Engine::Engine(Config* config, Tile* tile){
 		return;
 		}
 		
-	window = glfwCreateWindow(this->width, this->height, "Lanthill", NULL, NULL);
+	window = glfwCreateWindow(this->width, this->height, "Lanthill", glfwGetPrimaryMonitor(), NULL);
 	if (!window){
         glfwTerminate();
         return;

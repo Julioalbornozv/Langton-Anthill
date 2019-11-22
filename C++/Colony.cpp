@@ -7,6 +7,7 @@
 
 #include "Colony.h"
 #include <sstream>
+#include <time.h>
 
 Colony::Colony(Config* config, Tile* tile){
 	screen[0] = config->DWidth;
@@ -39,6 +40,7 @@ void Colony::load_ants(std::string path){
 	std::ifstream file(path);	//File content
 	std::string line;
 	
+	srand (time(NULL));
 	std::vector<Ant>* insects = new std::vector<Ant>; 
 	while (std::getline(file, line)){	//Read entire line
 		std::stringstream linestream(line);
@@ -126,7 +128,7 @@ std::string Colony::random_ruleset(){
 	* @return	String containing the new ruleset
 	* 
 	*/
-	
+	srand (time(NULL));
 	std::string Rrule;
 	for (unsigned int i = 0; i < length; i++){
 		int ch = rand() % sym.size();
