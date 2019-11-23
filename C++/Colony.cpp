@@ -7,7 +7,6 @@
 
 #include "Colony.h"
 #include <sstream>
-#include <time.h>
 
 Colony::Colony(Config* config, Tile* tile){
 	screen[0] = config->DWidth;

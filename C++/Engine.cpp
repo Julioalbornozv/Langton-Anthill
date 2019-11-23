@@ -61,16 +61,16 @@ Engine::Engine(Config* config, Tile* tile){
 	}
 	
 void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* TileGen){
-	// Runs simulation
-	int* TileIDs = TileGen->construct(ColorGen->palette);
+	
+	TileGen->construct(ColorGen->palette);	//Compile OpenGL lists
 	
 	std::map<std::pair<int,int>,int> Map;
 	Map[std::make_pair(0,0)] = 0;
 	
-	
 	int speed = 50;
 	int pre_speed = 0;
 	
+	//Start rendering
 	while (!glfwWindowShouldClose(window)){
 		
 		//Move all user input to its own function, Refactor
@@ -100,7 +100,7 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 		//Shuffles current color palette
 		else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
 			std::random_shuffle(ColorGen->palette->begin(), ColorGen->palette->end());
-			TileIDs = TileGen->reset(ColorGen->palette);
+			TileGen->reset(ColorGen->palette);
 			}
 		
 		//Generates new colorset
@@ -108,7 +108,7 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 			delete ColorGen->palette;
 			ColorGen->random_palette(ColorGen->base);
 			ColorGen->generate_colors();
-			TileIDs = TileGen->reset(ColorGen->palette);
+			TileGen->reset(ColorGen->palette);
 			}
 
         glClear(GL_COLOR_BUFFER_BIT);

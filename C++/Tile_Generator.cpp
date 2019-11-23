@@ -7,7 +7,6 @@
 // software may be distributed.
 
 #include "Generators.h"
-#include "Tile.h"
 
 Tile_Generator::Tile_Generator(Config* config){
 	this->scale = config->scale;
@@ -32,7 +31,7 @@ Tile* Tile_Generator::form(){
 		}
 	}
 	
-int* Tile_Generator::reset(std::vector<glm::vec3>* colors){
+void Tile_Generator::reset(std::vector<glm::vec3>* colors){
 	/***
 	 * Deletes previous Tile instances, creates a new set based on 
 	 * the colors given.
@@ -42,11 +41,10 @@ int* Tile_Generator::reset(std::vector<glm::vec3>* colors){
 	 * @return New Tileset OpenGL ID list
 	 */
 	 glDeleteLists(1, colors->size());
-	 
-	 return construct(colors);
+	 construct(colors);
 	}
 	
-int* Tile_Generator::construct(std::vector<glm::vec3>* colors){
+void Tile_Generator::construct(std::vector<glm::vec3>* colors){
 	/***
 	 * For each color given, the generator will instance a Tile by 
 	 * calling the OpenGL commands used on its construction + its color
@@ -54,11 +52,8 @@ int* Tile_Generator::construct(std::vector<glm::vec3>* colors){
 	 * @return Tileset OpenGL ID list
 	 */
 	unsigned int size = colors->size();
-	int* TileID = new int[size];
 	for (unsigned int i = 0; i < size; i++){
-		int id = generic->compile(&(*colors)[i]);
-		TileID[i] = id;
+		generic->compile(&(*colors)[i]);
 		}
-		
-	return TileID;
 	}
+	

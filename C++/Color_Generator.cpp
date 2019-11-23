@@ -5,12 +5,11 @@
 // Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
 // The License.txt file describes the conditions under which this
 // software may be distributed.
+
 #include "Generators.h"
-#include <array>
 #include <algorithm>
-#include <iostream>
 #include <fstream>
-#include <time.h>
+#include <sstream>
 
 Color_Generator::Color_Generator(Config* config){
 	/***

@@ -7,8 +7,7 @@
 // The License.txt file describes the conditions under which this
 // software may be distributed.
 
-#include <string>
-#include <windows.h>
+#include "Parameters.h"
 
 Config::Config(){
 	/*** 

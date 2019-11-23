@@ -6,7 +6,7 @@
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include "Ant.h"
-#include <iostream>
+
 Ant::Ant(int x, int y, int orientation, std::string rules, Tile* temp){
 	/***
 	* Ant Class, it has a position and an orientation, the ant will move depending 

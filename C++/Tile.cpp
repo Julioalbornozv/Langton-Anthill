@@ -27,7 +27,7 @@ Square_Tile::Square_Tile(int scale){
 	this->offset['D'] = 2;
 	}
 	
-int Square_Tile::compile(glm::vec3* color){
+void Square_Tile::compile(glm::vec3* color){
 	int TileID = glGenLists(1);
 	float k = (float)this->scale / 2.0f;
 	glm::vec3 n_col = *color / 255.0f;		//Color Normalization
@@ -48,7 +48,6 @@ int Square_Tile::compile(glm::vec3* color){
 	glPopMatrix();
 	glEndList();
 	
-	return TileID;
 	}
 	
 Hexagon_Tile::Hexagon_Tile(int scale){
@@ -74,7 +73,7 @@ Hexagon_Tile::Hexagon_Tile(int scale){
 	this->offset['B'] = 3;
 	}
 
-int Hexagon_Tile::compile(glm::vec3 *color){
+void Hexagon_Tile::compile(glm::vec3 *color){
 	int TileID = glGenLists(1);
 	float R = (float)(this->scale / 2.0f);
 	
@@ -95,7 +94,6 @@ int Hexagon_Tile::compile(glm::vec3 *color){
 	glPopMatrix();
 	glEndList();
 	
-	return TileID;
 	}
 	
 	
