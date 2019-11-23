@@ -27,7 +27,7 @@ public:
 	void render_tiles(std::map<std::pair<int, int>, int>* map);
 	
 private:
-	int width, height;
+	int Dwidth, Dheight, Gwidth, Gheight;
 	int* speed;
 	GLFWwindow* window;
 	

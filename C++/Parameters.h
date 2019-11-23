@@ -13,9 +13,12 @@
 class Config{
 public:
 	//Display
-	bool fullscreen	;				//Fullscreen option
-	unsigned int DHeight, DWidth;	// Screen dimensions
+	bool fullscreen	;				// Fullscreen option
+	unsigned int DWidth, DHeight;	// Screen dimensions
 	
+	//Grid
+	bool adjust;					// Grid size == Display Size 
+	unsigned int GWidth, GHeight;	// Board Dimensions
 	//Color
 	unsigned int base;	// Number of colors used for palette generation
 	std::string scheme;		// Color Generator mode

@@ -16,9 +16,14 @@ Config::Config(){
 	 */
 	
 	//[Display]
-	DWidth = GetPrivateProfileInt("Display", "WIDTH", 0, ".\\config.ini");
-	DHeight = GetPrivateProfileInt("Display", "HEIGHT", 0, ".\\config.ini");
 	getBool(&fullscreen, 10, "Display", "FULLSCREEN", "YES");
+	DWidth = GetPrivateProfileInt("Display", "WIDTH", 50, ".\\config.ini");
+	DHeight = GetPrivateProfileInt("Display", "HEIGHT", 50, ".\\config.ini");
+	
+	//[Grid]
+	getBool(&fullscreen, 10, "Grid", "ADJUST", "YES");
+	GWidth = GetPrivateProfileInt("Grid", "WIDTH", 50, ".\\config.ini");
+	GHeight = GetPrivateProfileInt("Grid", "HEIGHT", 50, ".\\config.ini");
 	
 	//[Color]
 	base = GetPrivateProfileInt("Color", "BASE", 2, ".\\config.ini");

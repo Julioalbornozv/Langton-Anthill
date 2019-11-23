@@ -34,10 +34,19 @@ Engine::Engine(Config* config, Tile* tile){
 		monitor = glfwGetPrimaryMonitor();
 		}
 	
-	width = config->DWidth * tile->X;
-	height = config->DHeight * tile->Y;
+	Dwidth = config->DWidth * tile->X;
+	Dheight = config->DHeight * tile->Y;
 	
-	window = glfwCreateWindow(width, height, "Lanthill", monitor, NULL);
+	if (config->adjust){
+		Gwidth = Dwidth;
+		Gheight = Dheight;
+		}
+	else{
+		Gwidth = config->GWidth * tile->X;
+		Gheight = config->GHeight * tile->Y;
+		}
+		
+	window = glfwCreateWindow(Dwidth, Dheight, "Lanthill", monitor, NULL);
 	
 	if (!window){
         glfwTerminate();
@@ -46,10 +55,10 @@ Engine::Engine(Config* config, Tile* tile){
 	glfwMakeContextCurrent(window);
 	
 	//OpenGL initial settings
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, Dwidth, Dheight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, width, 0.0, height);
+	gluOrtho2D(0.0, Dwidth, 0.0, Dheight);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
@@ -91,8 +100,8 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 				Map[coord] = (color+1) % (ColorGen->size);
 				ant.command(color);
 				
-				ant.pos[0] = ((ant.pos[0] % width) + width) % width;
-				ant.pos[1] = ((ant.pos[1] % height) + height) % height;
+				ant.pos[0] = ((ant.pos[0] % Gwidth) + Gwidth) % Gwidth;
+				ant.pos[1] = ((ant.pos[1] % Gheight) + Gheight) % Gheight;
 				}
 			}
         glfwSwapBuffers(window);

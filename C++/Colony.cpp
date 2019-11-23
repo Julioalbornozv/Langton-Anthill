@@ -9,8 +9,8 @@
 #include <sstream>
 
 Colony::Colony(Config* config, Tile* tile){
-	screen[0] = config->DWidth;
-	screen[1] = config->DHeight;
+	screen[0] = config->GWidth;
+	screen[1] = config->GHeight;
 	
 	def_rule = config->def_rule;
 	sym = config->symbols;
