@@ -9,10 +9,10 @@
 #include "Generators.h"
 
 Tile_Generator::Tile_Generator(Config* config){
-	this->scale = config->scale;
-	this->shape = config->shape;
+	scale = config->scale;
+	shape = config->shape;
 	
-	this->generic = this->form();
+	generic = form();
 	}
 	
 Tile* Tile_Generator::form(){
@@ -20,11 +20,11 @@ Tile* Tile_Generator::form(){
 	 * Initializes a Tile object, if the shape requested is not known it 
 	 * will raise an error.
 	 */
-	if (this->shape.compare("SQUARE") == 0){
-		return new Square_Tile(this->scale);
+	if (shape.compare("SQUARE") == 0){
+		return new Square_Tile(scale);
 		}
-	else if (this->shape.compare("HEXAGON") == 0){
-		return new Hexagon_Tile(this->scale);
+	else if (shape.compare("HEXAGON") == 0){
+		return new Hexagon_Tile(scale);
 		}	
 	else{
 		throw std::invalid_argument("Unknown tile shape");

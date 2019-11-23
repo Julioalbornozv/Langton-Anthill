@@ -7,16 +7,16 @@
 // software may be distributed.
 
 #pragma once
+
 #include <GLFW/glfw3.h>
-#include "Parameters.h"
 #include "Colony.h"
 #include "Generators.h"
-#include "Tile.h"
-#include <unordered_map>
 #include <map>
 #include <utility> //Pairs
 #include <winuser.h>
 
+class Config;
+class Tile;
 class Engine{
 	/***
 	 * Class concerning simulation rendering and user interaction
@@ -28,5 +28,8 @@ public:
 	
 private:
 	int width, height;
+	int* speed;
 	GLFWwindow* window;
+	
+	void catchInput(Color_Generator* CG, Tile_Generator* TG);
 	};

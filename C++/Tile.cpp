@@ -13,27 +13,25 @@
 Square_Tile::Square_Tile(int scale){
 	int R = scale;
 	this->scale = R;
-	this->X = R;
-	this->Y = R;
+	X = R;
+	Y = R;
 	
-	this->directions[0] = glm::vec2(0.0, R); 
-	this->directions[1] = glm::vec2(R,0.0);
-	this->directions[2] = glm::vec2(0.0, -R);
-	this->directions[3] = glm::vec2(-R, 0.0);
+	directions = {{0, glm::vec2(0.0, R)}, 
+	              {1, glm::vec2(R,0.0)},
+				  {2, glm::vec2(0.0, -R)}, 
+				  {3,glm::vec2(-R, 0.0)}};
 	
-	this->offset['R'] = 1; 
-	this->offset['L'] = -1;
-	this->offset['U'] = 0;
-	this->offset['D'] = 2;
+	offset = {{'R', 1}, {'L', -1}, {'U', 0}, {'D', 2}};
 	}
 	
 void Square_Tile::compile(glm::vec3* color){
 	int TileID = glGenLists(1);
-	float k = (float)this->scale / 2.0f;
+	float k = (float)scale / 2.0f;
 	glm::vec3 n_col = *color / 255.0f;		//Color Normalization
 	
 	float* p_col = glm::value_ptr(n_col);	//Cast to float array
 	
+	//------------------------------------
 	glNewList(TileID, GL_COMPILE);
 	glPushMatrix();
 	
@@ -55,32 +53,28 @@ Hexagon_Tile::Hexagon_Tile(int scale){
 	float R = (float)this->scale / 2.0f;
 	int r = (int)(R * cos(PI / 6.0f));
 	int d = (int)(3.0f*R/2.0f);
-	this->X = 2*d;
-	this->Y = 2*r;
+	X = 2*d;
+	Y = 2*r;
 	
-	this->directions[0] = glm::vec2(0.0f, 2*r); 
-	this->directions[1] = glm::vec2(d,r);
-	this->directions[2] = glm::vec2(d, -r);
-	this->directions[3] = glm::vec2(0.0f, -2*r);
-	this->directions[4] = glm::vec2(-d,-r);
-	this->directions[5] = glm::vec2(-d, r);
-	
-	this->offset['R'] = 1; 
-	this->offset['S'] = 2;
-	this->offset['L'] = -1;
-	this->offset['M'] = -2;
-	this->offset['T'] = 0;
-	this->offset['B'] = 3;
+	directions = {{0, glm::vec2(0.0f, 2*r)}, 
+				  {1, glm::vec2(d,r)}, 
+				  {2, glm::vec2(d, -r)},
+				  {3, glm::vec2(0.0f, -2*r)}, 
+				  {4, glm::vec2(-d,-r)}, 
+				  {5, glm::vec2(-d, r)}};
+				  
+	offset = {{'R', 1}, {'S',2}, {'L',-1}, {'M',-2}, {'T',0}, {'B',3}};
 	}
 
 void Hexagon_Tile::compile(glm::vec3 *color){
 	int TileID = glGenLists(1);
-	float R = (float)(this->scale / 2.0f);
+	float R = (float)(scale / 2.0f);
 	
 	glm::vec3 n_col = *color / 255.0f;
 	
 	float* p_col = glm::value_ptr(n_col);	//Cast to float array
 	
+	//------------------------------------
 	glNewList(TileID,GL_COMPILE);
 	glPushMatrix();
 	

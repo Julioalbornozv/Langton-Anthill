@@ -13,58 +13,50 @@ Config::Config(){
 	/*** 
 	 * [WINDOWS] Parses configuration file "config.ini" and saves data in 
 	 * a Config object.
-	 
-	 * TODO: Cleanup code
 	 */
-	 
-	_TCHAR buffer[10];
 	
 	//[Display]
-	this->DWidth = GetPrivateProfileInt("Display", "WIDTH", 0, ".\\config.ini");
-	this->DHeight = GetPrivateProfileInt("Display", "HEIGHT", 0, ".\\config.ini");
+	DWidth = GetPrivateProfileInt("Display", "WIDTH", 0, ".\\config.ini");
+	DHeight = GetPrivateProfileInt("Display", "HEIGHT", 0, ".\\config.ini");
+	getBool(&fullscreen, 10, "Display", "FULLSCREEN", "YES");
 	
 	//[Color]
-	
-	this->base = GetPrivateProfileInt("Color", "BASE", 2, ".\\config.ini");
-	
-	GetPrivateProfileString("Color","SCHEME", "LOAD", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	this->scheme = buffer;
-	
-	GetPrivateProfileString("Color","INTERPOLATION", "NONE", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	this->interp = buffer;
-	
-	GetPrivateProfileString("Color","SHUFFLE", "YES", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	strcmp(buffer, "YES") ? this->shuffle = false : this->shuffle = true;
-	
-	GetPrivateProfileString("Color","SAVE", "YES", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	strcmp(buffer, "YES") ? this->Csave = false : this->Csave = true;
+	base = GetPrivateProfileInt("Color", "BASE", 2, ".\\config.ini");
+	getString(&scheme, 10, "Color", "SCHEME", "LOAD");
+	getString(&interp, 10, "Color", "INTERPOLATION", "NONE");
+	getBool(&shuffle, 10, "Color", "SHUFFLE", "YES");
+	getBool(&Csave, 10, "Color", "SAVE", "YES");
 	
 	//[Ruleset]
-	this->length = GetPrivateProfileInt("Ruleset", "LENGTH", 2, ".\\config.ini");
-	
-	GetPrivateProfileString("Ruleset","SYMBOLS", "LR", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	this->symbols = buffer;
+	length = GetPrivateProfileInt("Ruleset", "LENGTH", 2, ".\\config.ini");
+	getString(&symbols, 10, "Ruleset", "SYMBOLS", "L");
 	
 	int buff_size;
-	if (this->length > 7){
-		buff_size = this->length+1;
-		}
-	else{
-		buff_size = 7; //RANDOM option
-		}
+	(length > 7) ? buff_size = length+1 : buff_size = 7;
 		
-	_TCHAR rule_buf[buff_size];
-	
-	GetPrivateProfileString("Ruleset","DEFAULT", "LR", rule_buf, sizeof(rule_buf) / sizeof(rule_buf[0]),".\\config.ini");
-	this->def_rule = rule_buf;
-	
-	GetPrivateProfileString("Ruleset","SAVE", "YES", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	strcmp(buffer, "YES") ? this->Rsave = false : this->Rsave = true;
-	
+	getString(&def_rule, buff_size, "Ruleset", "DEFAULT", "LR");
+	getBool(&Rsave, 10, "Ruleset", "SAVE", "YES");
+
 	//[Tile]
-	this->scale = GetPrivateProfileInt("Tile", "SCALE", 5, ".\\config.ini");
+	scale = GetPrivateProfileInt("Tile", "SCALE", 5, ".\\config.ini");
+	getString(&shape, 10, "Tile", "SHAPE", "SQUARE");
 	
-	GetPrivateProfileString("Tile","SHAPE", "SQUARE", buffer, sizeof(buffer) / sizeof(buffer[0]),".\\config.ini");
-	this->shape = buffer;
 	}
 	
+void Config::getString(std::string* target, int size, LPCTSTR section, LPCTSTR setting, LPCTSTR fail_state, LPCTSTR file){
+	/***
+	* Recover string from config file using GetPrivateProfileString method
+	*/
+	_TCHAR buffer[size];
+	GetPrivateProfileString(section, setting, fail_state, buffer, size, file);
+	*target = buffer;
+	}
+
+void Config::getBool(bool* target, int size, LPCTSTR section, LPCTSTR setting, LPCTSTR fail_state, LPCTSTR file){
+	/***
+	* Recover bool from config file using GetPrivateProfileString method
+	*/
+	_TCHAR buffer[size];
+	GetPrivateProfileString(section, setting, fail_state, buffer, size, file);
+	strcmp(buffer, "YES") ? *target = false : *target = true;
+	}

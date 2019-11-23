@@ -32,17 +32,17 @@ public:
 	std::unordered_map<int, glm::vec2> directions;
 	std::unordered_map<char, int> offset;
 	
-	virtual int compile(glm::vec3 *color) = 0;
+	virtual void compile(glm::vec3 *color) = 0;
 	};
 	
 class Square_Tile : public Tile{
 public:
 	Square_Tile(int scale);
-	int compile(glm::vec3 *color);
+	void compile(glm::vec3 *color);
 	};
 	
 class Hexagon_Tile : public Tile{
 public:
 	Hexagon_Tile(int scale);
-	int compile(glm::vec3 *color);
+	void compile(glm::vec3 *color);
 	};

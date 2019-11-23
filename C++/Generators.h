@@ -8,16 +8,11 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Tile.h"
 #include "Parameters.h"
-#include <unordered_map>
-#include <functional>
-#include <string>
-#include <sstream>
+#include "Tile.h"
 #include <vector>
 
 class Color_Generator{
@@ -41,12 +36,12 @@ public:
 	void random_palette(unsigned int n);
 	void generate_colors();
 	unsigned int size;
+	unsigned int base;
 	
 	std::vector<glm::vec3>* palette;
 	bool write;
 	
 private:
-	unsigned int base;
 	std::string interp;
 	bool shuffle;
 	std::string scheme;
@@ -54,7 +49,7 @@ private:
 	std::vector<glm::vec3>* fill_palette();
 	void linspace(glm::vec3 A, glm::vec3 B, int num, std::vector<glm::vec3>* caret);
 	};
-	
+
 class Tile;
 class Tile_Generator{
 	/***
@@ -76,8 +71,8 @@ public:
 	Tile* generic;
 	
 	Tile* form();
-	int* reset(std::vector<glm::vec3>* colors);
-	int* construct(std::vector<glm::vec3>* colors);
+	void reset(std::vector<glm::vec3>* colors);
+	void construct(std::vector<glm::vec3>* colors);
 	
 private:
 	unsigned int scale;

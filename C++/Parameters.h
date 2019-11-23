@@ -8,10 +8,12 @@
 
 #pragma once
 #include <string>
+#include <windows.h>
 
 class Config{
 public:
 	//Display
+	bool fullscreen	;				//Fullscreen option
 	unsigned int DHeight, DWidth;	// Screen dimensions
 	
 	//Color
@@ -32,4 +34,8 @@ public:
 	std::string shape;		// Tile shape (SQUARE or HEXAGON)
 	
 	Config();
+	
+private:
+	void getString(std::string* target , int size, LPCTSTR section, LPCTSTR setting, LPCTSTR fail_state, LPCTSTR file = ".\\config.ini");
+	void getBool(bool* target , int size, LPCTSTR section, LPCTSTR setting, LPCTSTR fail_state, LPCTSTR file = ".\\config.ini");
 	};

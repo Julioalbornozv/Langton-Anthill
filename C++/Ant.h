@@ -7,9 +7,10 @@
 
 #pragma once
 #include "Tile.h"
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
 #include <string>
 
+class Tile;
 class Ant{
 public:
 	Tile* tile;
