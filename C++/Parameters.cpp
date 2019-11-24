@@ -21,7 +21,7 @@ Config::Config(){
 	DHeight = GetPrivateProfileInt("Display", "HEIGHT", 50, ".\\config.ini");
 	
 	//[Grid]
-	getBool(&fullscreen, 10, "Grid", "ADJUST", "YES");
+	getBool(&adjust, 10, "Grid", "ADJUST", "YES");
 	GWidth = GetPrivateProfileInt("Grid", "WIDTH", 50, ".\\config.ini");
 	GHeight = GetPrivateProfileInt("Grid", "HEIGHT", 50, ".\\config.ini");
 	

@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include <GL/glu.h>
 #include <algorithm>
+#include <glm/glm.hpp>
 
 Engine::Engine(Config* config, Tile* tile){
 	/***
@@ -38,13 +39,12 @@ Engine::Engine(Config* config, Tile* tile){
 	Dheight = config->DHeight * tile->Y;
 	
 	if (config->adjust){
-		Gwidth = Dwidth;
-		Gheight = Dheight;
-		}
-	else{
-		Gwidth = config->GWidth * tile->X;
-		Gheight = config->GHeight * tile->Y;
-		}
+		config->GWidth = config->DWidth;
+		config->GHeight = config->DHeight;
+		}	
+		
+	Gwidth = config->GWidth * tile->X;
+	Gheight = config->GHeight * tile->Y;
 		
 	window = glfwCreateWindow(Dwidth, Dheight, "Lanthill", monitor, NULL);
 	
@@ -58,7 +58,7 @@ Engine::Engine(Config* config, Tile* tile){
 	glViewport(0, 0, Dwidth, Dheight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, Dwidth, 0.0, Dheight);
+	glOrtho(0.0, Dwidth, 0.0, Dheight, -50.0, 50.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
@@ -77,13 +77,43 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 	int vel[2] = {50,0};
 	speed = vel;
 	
+	//Move to Camera Object
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0, 0.0f);
+	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	
+	//glm::lookAt(cameraPos, cameraTarget, cameraUp);	//Camrera matrix (This should be given to shaders after their implementation)
+	
 	//Start rendering
 	while (!glfwWindowShouldClose(window)){
+		glLoadIdentity();
+		gluLookAt(cameraPos[0], cameraPos[1], cameraPos[2],
+				  cameraTarget[0], cameraTarget[1], cameraTarget[2],
+				  cameraUp[0], cameraUp[1], cameraUp[2]);
+		
+		//Move this to own function
+		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+			cameraPos[1] += 5.0f;
+			cameraTarget[1] += 5.0f;
+			}
+		
+		else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+			cameraPos[1] -= 5.0f;
+			cameraTarget[1] -= 5.0f;
+			}	
+		else if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+			cameraPos[0] += 5.0f;
+			cameraTarget[0] += 5.0f;
+			}
+		else if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+			cameraPos[0] -= 5.0f;
+			cameraTarget[0] -= 5.0f;
+			}
 		
 		catchInput(ColorGen, TileGen);
 
         glClear(GL_COLOR_BUFFER_BIT);
-		
+				  
 		render_tiles(&Map);
 		
 		for (int iter = 0; iter < *speed ; iter++){
@@ -123,11 +153,11 @@ void Engine::catchInput(Color_Generator* ColorGen, Tile_Generator* TileGen){
 		}
 	
 	//Speed Management
-	else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && *speed < 100){
+	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && *speed < 100){
 		*speed += 10;
 		}
 		
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && *speed > 10){
+	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && *speed > 10){
 		*speed -= 10;
 		}
 	
