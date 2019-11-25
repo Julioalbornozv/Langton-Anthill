@@ -22,8 +22,11 @@ int main(){
 	// Initialize tiles
 	Tile_Generator TGen = Tile_Generator(&Param);
 	
+	// Initialize Display object
+	Monitor Screen = Monitor(&Param, TGen.generic->X, TGen.generic->Y);
+	
 	//// Initialize engine class
-	Engine render = Engine(&Param, TGen.generic);
+	Engine render = Engine(&Param, TGen.generic, &Screen);
 	
 	// Create ants
 	Colony Anthill = Colony(&Param, TGen.generic);

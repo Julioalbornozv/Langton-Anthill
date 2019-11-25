@@ -8,21 +8,22 @@
 
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include "Colony.h"
 #include "Generators.h"
+#include "Monitor.h"
 #include <map>
 #include <utility> //Pairs
 #include <winuser.h>
 
 class Config;
 class Tile;
+class GLFWwindow;
 class Engine{
 	/***
 	 * Class concerning simulation rendering and user interaction
 	 */
 public:
-	Engine(Config* config, Tile* tile);
+	Engine(Config* config, Tile* tile, Monitor* monitor);
 	void run(Colony* Anthill, Color_Generator* CGen, Tile_Generator* TGen);
 	void render_tiles(std::map<std::pair<int, int>, int>* map);
 	
