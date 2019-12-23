@@ -84,7 +84,7 @@ void Color_Generator::save(std::string path){
 	std::vector<glm::vec3> colors = *palette;
 	for (unsigned int i = 0; i < size; i++){
 		glm::vec3 color = colors[i];
-		file << color[0] << '\t' << color[1] << '\t' << color[2] << '\n';
+		file << (int)color[0] << '\t' << (int)color[1] << '\t' << (int)color[2] << '\n';
 		}
 		
 	file.close();
@@ -115,7 +115,7 @@ std::vector<glm::vec3>* Color_Generator::fill_palette(){
 	std::vector<glm::vec3>* colors = new std::vector<glm::vec3>; 
 	
 	if (interp == "RGB"){
-		int req = size - n - 1;
+		int req = size - n ;
 		int gaps[n-1];
 		std::fill(&gaps[0], &gaps[n-1], (req/(n-1)));
 		
@@ -147,7 +147,7 @@ std::vector<glm::vec3>* Color_Generator::fill_palette(){
 
 void Color_Generator::linspace(glm::vec3 A, glm::vec3 B, int num, std::vector<glm::vec3>* vector){
 	/***
-	* Generates num-1 colors between A and B adds, adds A + said colors into a vector
+	* Generates num-1 colors between colors A and B, returns a vector including A and the generated colors
 	*
 	*/
 	glm::vec3 steps = (B - A)/(float)(num + 1);

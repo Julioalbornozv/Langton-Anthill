@@ -47,7 +47,7 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 	
 	TileGen->construct(ColorGen->palette);	//Compile OpenGL lists
 	
-	std::map<std::pair<int,int>,int> Map;
+	std::map<std::pair<int,int>,int> Map; //MOve this to a Grid class, including the constructor commands from above
 	Map[std::make_pair(0,0)] = 0;
 	
 	int vel[2] = {50,0};
