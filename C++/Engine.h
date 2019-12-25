@@ -12,12 +12,13 @@
 #include "Generators.h"
 #include "Monitor.h"
 #include <map>
-#include <utility> //Pairs
+#include <utility>
 #include <winuser.h>
 
 class Config;
 class Tile;
 class GLFWwindow;
+class Camera;
 class Engine{
 	/***
 	 * Class concerning simulation rendering and user interaction
@@ -28,9 +29,9 @@ public:
 	void render_tiles(std::map<std::pair<int, int>, int>* map);
 	
 private:
-	int Dwidth, Dheight, Gwidth, Gheight;
+	int DWidth, DHeight, Gwidth, Gheight;
 	int* speed;
 	GLFWwindow* window;
 	
-	void catchInput(Color_Generator* CG, Tile_Generator* TG);
+	void catchInput(Color_Generator* CG, Tile_Generator* TG, Camera* visor);
 	};

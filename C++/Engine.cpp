@@ -47,7 +47,7 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 	
 	TileGen->construct(ColorGen->palette);	//Compile OpenGL lists
 	
-	std::map<std::pair<int,int>,int> Map; //MOve this to a Grid class, including the constructor commands from above
+	std::map<std::pair<int,int>,int> Map; //Move this to a Grid class, including the constructor commands from above
 	Map[std::make_pair(0,0)] = 0;
 	
 	int vel[2] = {50,0};
@@ -61,21 +61,8 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 	while (!glfwWindowShouldClose(window)){
 		
 		//Move this to own function
-		if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-			visor.move(UP);
-			}
 		
-		else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-			visor.move(DOWN);
-			}	
-		else if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-			visor.move(RIGHT);
-			}
-		else if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-			visor.move(LEFT);
-			}
-		
-		catchInput(ColorGen, TileGen);
+		catchInput(ColorGen, TileGen, &visor);
 		
 		visor.updateVectors();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -111,7 +98,8 @@ void Engine::run(Colony* Anthill, Color_Generator* ColorGen, Tile_Generator* Til
 	glfwTerminate();
 	}
 	
-void Engine::catchInput(Color_Generator* ColorGen, Tile_Generator* TileGen){
+void Engine::catchInput(Color_Generator* ColorGen, Tile_Generator* TileGen, Camera* visor){
+	//TODO: Improve this method
 	
 	//Exit
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
@@ -127,7 +115,7 @@ void Engine::catchInput(Color_Generator* ColorGen, Tile_Generator* TileGen){
 		*speed -= 10;
 		}
 	
-	else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){ //Refactor this block
+	else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){
 		(*speed == 0) ? speed-- : speed++;
 		}
 	
@@ -143,6 +131,21 @@ void Engine::catchInput(Color_Generator* ColorGen, Tile_Generator* TileGen){
 		ColorGen->random_palette(ColorGen->base);
 		ColorGen->generate_colors();
 		TileGen->reset(ColorGen->palette);
+		}
+	
+	//Camera movement
+	else if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+		visor->move(UP);
+		}
+	
+	else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+		visor->move(DOWN);
+		}	
+	else if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+		visor->move(RIGHT);
+		}
+	else if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+		visor->move(LEFT);
 		}
 	}
 

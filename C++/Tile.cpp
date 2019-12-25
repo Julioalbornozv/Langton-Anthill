@@ -1,6 +1,6 @@
 /***
  * @file Tile.cpp
- * Tile implementations
+ * Tile type implementations
  */
 // Copyright 2019 by Julio Albornoz <gatalegath@protonmail.com>
 // The License.txt file describes the conditions under which this software may be distributed.
